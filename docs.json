@@ -13,20 +13,18 @@
       {
         "group": "Get Started",
         "pages": [
-          "index",
-          "quickstart",
-          "development"
+          "Welcome to Docket",
+          "Quickstart"
         ]
       },
       {
         "group": "Essentials",
         "pages": [
-          "essentials/markdown",
-          "essentials/code",
-          "essentials/images",
-          "essentials/settings",
-          "essentials/navigation",
-          "essentials/reusable-snippets"
+          "essentials/test-creation",
+          "essentials/running-test",
+          "essentials/ci-integration",
+          "essentials/agent-context",
+          "essentials/notifications"
         ]
       }
     ]
