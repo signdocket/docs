@@ -20,6 +20,7 @@
       {
         "group": "Essentials",
         "pages": [
+          "essentials/test-suite",
           "essentials/test-creation",
           "essentials/running-test",
           "essentials/ci-integration",
