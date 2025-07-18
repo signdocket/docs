@@ -1,88 +1,366 @@
 ---
-title: 'CI Integration'
-description: 'Integrating Docket runs with CI/CD pipeline'
-icon: 'workflow'
+title: "CI Integration"
+description: "Integrating Docket runs with CI/CD pipeline"
+icon: "workflow"
 ---
 
-## Titles
+# Setting up your CI/CD with Docket
 
-Best used for section headers.
+**Pre-requisites** 🚨
 
-```md
-## Titles
+1. Make sure you have a Github account (with admin access to repos you’d like to connect)
+2. Make sure you have a Docket account
+3. Make sure you have a **Docket API Key**
+   1. Can’t find one? No worries, e-mail `boris@docketqa.com` for support\!
+
+**Set-up Process** 🚀
+
+1. Add your **Docket API** key to your Github Org
+   1. Open the repo you’d like to connect on Github
+   2. Click on **Settings** \> **Security \> Secrets and variables \> Actions**
+   3. Create a new **`Repository Secret, name it DOCKET_API_KEY`**
+2. Log-in to [app.docketqa.com](http://app.docketqa.com) and click on `CI/CD`
+
+   ![Screenshot_2025-05-21_at_7.17.39_PM.png](/images/Screenshot_2025-05-21_at_7.17.39_PM.png)
+3. You should see a big **Connect GitHub** button, click it
+
+   ![Screenshot_2025-05-21_at_7.20.31_PM.png](/images/Screenshot_2025-05-21_at_7.20.31_PM.png)
+4. Follow the installation instructions & select your repo
+
+   ![Screenshot_2025-05-21_at_7.30.00_PM.png](/images/Screenshot_2025-05-21_at_7.30.00_PM.png)
+5. After you click `Install` , you should be re-directed back to Docket. Click `View Connected Repos` . You should now see the connected repo
+
+   ![Screenshot_2025-05-21_at_7.33.05_PM.png](/images/Screenshot_2025-05-21_at_7.33.05_PM.png)
+
+### How the Gated Deployment Process Works
+
+1. **Trigger**: Your deployment workflow is typically triggered by an event like a tag push (e.g., `v1.0.0`). This kicks off a Test Suite run on Docket.
+2. **QA Status Check**: The workflow identifies the specific commit associated with the trigger and polls GitHub for a commit status from Docket QA (e.g., a status with the context `ci/docket-qa`). When Docket finishes running your test suite, it notifies Github about the pass/fail status of the commit.
+3. **Automated Path (QA Passes)**:
+   - If the Docket QA status for the commit is `success`, the workflow proceeds to deploy your application automatically.
+4. **Manual Override Path (QA Fails or Times Out)**:
+   - If the Docket QA status is `failure`, `error`, or if the check times out before a `success` status is received:
+     - The workflow will **not** automatically deploy.
+     - Instead, a **manual approval process** is initiated which involves creating a GitHub Issue detailing the QA failure and asking for a decision.
+     - Designated approvers (specified in the workflow) can review the situation and comment on the issue (e.g., with `/approve` or `/reject`).
+     - If **approved**, the workflow proceeds with the deployment.
+     - If **rejected** or if the approval request times out, the deployment is halted, and the workflow job fails.
+
+This ensures quality control via Docket QA while providing the necessary flexibility for authorized manual overrides.
+
+Add `.github/workflows/release-pipeline.yml`
+
+> This is an example workflow for the release step of your CI/CD pipeline. In short, it assigns a `pending` status to the release commit and kicks off a Docket test run using: your Docket API Key \+ the `test_blueprint_category_id` of your test group in docket (this id resembles a grouping of all the QA tests you want to run).
+
+```yaml
+name: Release Pipeline with Docket QA
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag_to_qa:
+        description: 'Git tag to run QA against (e.g., v1.0.0). Must exist.'
+        required: true
+        type: string
+
+jobs:
+  initiate_docket_qa:
+    name: Initiate Docket QA Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read      # To checkout the code/tag
+      statuses: write    # To set the initial "pending" commit status
+
+    steps:
+      - name: Determine Ref and SHA for QA
+        id: qa_commit_details
+        run: |
+          REF_TO_CHECKOUT=""
+          SHA_FOR_STATUS="" # Will be determined after checkout for workflow_dispatch
+          TAG_NAME=""
+
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            TAG_NAME="${{ github.ref_name }}"
+            REF_TO_CHECKOUT="refs/tags/$TAG_NAME"
+            SHA_FOR_STATUS="${{ github.sha }}" # For release events, github.sha is the commit SHA of the tag
+            echo "Release event for tag: $TAG_NAME, Ref: $REF_TO_CHECKOUT, SHA: $SHA_FOR_STATUS"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TAG_NAME="${{ github.event.inputs.tag_to_qa }}"
+            REF_TO_CHECKOUT="refs/tags/$TAG_NAME"
+            echo "Workflow dispatch for tag: $TAG_NAME, Ref: $REF_TO_CHECKOUT. SHA will be resolved after checkout."
+            # SHA_FOR_STATUS will be set in the next step after checkout
+          else
+            echo "::error::Unsupported event: ${{ github.event_name }}"
+            exit 1
+          fi
+          echo "ref_to_checkout=${REF_TO_CHECKOUT}" >> $GITHUB_OUTPUT
+          echo "sha_for_status_initial=${SHA_FOR_STATUS}" >> $GITHUB_OUTPUT
+          echo "tag_name=${TAG_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Checkout Code for QA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.qa_commit_details.outputs.ref_to_checkout }}
+          fetch-depth: 0 # Ensure tags are fetched
+
+      - name: Resolve SHA for Tag (if not already set)
+        id: resolve_sha
+        run: |
+          FINAL_SHA="${{ steps.qa_commit_details.outputs.sha_for_status_initial }}"
+          if [ -z "$FINAL_SHA" ]; then
+            # This path is mainly for workflow_dispatch, where SHA is resolved from the checked-out ref
+            echo "Resolving SHA from checked-out ref: ${{ steps.qa_commit_details.outputs.ref_to_checkout }}"
+            FINAL_SHA=$(git rev-parse HEAD)
+            if [ -z "$FINAL_SHA" ]; then
+              echo "::error::Could not resolve SHA for ref ${{ steps.qa_commit_details.outputs.ref_to_checkout }} after checkout."
+              exit 1
+            fi
+            echo "Resolved SHA: $FINAL_SHA"
+          fi
+          echo "sha_for_status=${FINAL_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Set Initial QA Status to Pending
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const releaseTag = "${{ steps.qa_commit_details.outputs.tag_name }}";
+            const sha = "${{ steps.resolve_sha.outputs.sha_for_status }}";
+
+            if (!sha) {
+              core.setFailed("Could not determine commit SHA to set status.");
+              return;
+            }
+
+            core.info(`Setting 'pending' status for Docket QA on tag: ${releaseTag} (SHA: ${sha})`);
+
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: sha,
+              state: 'pending',
+              target_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`, // Link to this workflow run
+              description: 'Docket QA tests initiated, awaiting results...',
+              context: 'ci/docket-qa' // Must match the context used by the listener and deploy workflow
+            });
+            core.info("Pending status set successfully.");
+
+      - name: Trigger Docket QA Test
+        id: trigger_docket_qa
+        uses: signdocket/docket-action@v2 # Assuming this action uses the GITHUB_SHA of the checked-out commit
+        with:
+          apiKey: ${{ secrets.DOCKET_API_KEY }}
+          repositoryFullName: ${{ github.repository }}
+          # The docket-action should pick up the correct commit SHA after the checkout step.
+          # Ensure the docket_run_completed event payload contains this SHA as 'commitSha'.
+          testParameters: |
+            {
+              "test_blueprint_category_id": "3"
+            }
+
+      - name: QA Process Initiated
+        run: |
+          echo "Docket QA test process has been initiated for release tag: ${{ steps.qa_commit_details.outputs.tag_name }} (SHA: ${{ steps.resolve_sha.outputs.sha_for_status }})."
+          echo "Docket run ID: ${{ steps.trigger_docket_qa.outputs.runId }}"
+          echo "Awaiting webhook from Docket server to update commit status via the 'Docket Run Results' workflow."
 ```
 
-### Subtitles
+`.github/workflows/docket-results-qa-listener.yml`
 
-Best used for subsection headers.
+When your test run completes, Docket sends a dispatch event to your Github repository. This workflow subscribes to such events and marks the release commit’s status to pass/fail depending on the outcome of the test run.
 
-```md
-### Subtitles
+```yaml
+name: Docket Run Results
+
+on:
+  repository_dispatch:
+    types: [docket_run_completed]
+
+jobs:
+  handle-docket-run-results:
+    name: Handle Docket Run Results
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+
+    steps:
+      - name: Log QA Result Payload and Map Status
+        id: qa_data
+        run: |
+          echo "Received Docket QA run completed event!"
+          echo "Client payload: ${{ toJSON(github.event.client_payload) }}"
+
+          COMMIT_SHA="${{ github.event.client_payload.commitSha }}"
+          DOCKET_SERVER_STATUS="${{ github.event.client_payload.status }}" 
+          DETAILS_URL="${{ github.event.client_payload.detailsUrl }}"
+          SUMMARY="${{ github.event.client_payload.summary }}"
+          CONTEXT_LABEL="ci/docket-qa" 
+          DOCKET_RUN_ID="${{ github.event.client_payload.runId }}"
+
+          echo "Commit SHA: $COMMIT_SHA"
+          echo "Docket Server Status: $DOCKET_SERVER_STATUS"
+          echo "Docket Run ID: $DOCKET_RUN_ID"
+          echo "Details URL: $DETAILS_URL"
+          echo "Summary: $SUMMARY"
+          echo "Context Label for Commit Status: $CONTEXT_LABEL"
+
+          # Map Docket server status to GitHub commit status states
+          GITHUB_COMMIT_STATE="error"
+
+          if [[ "$DOCKET_SERVER_STATUS" == "passed" ]]; then
+            GITHUB_COMMIT_STATE="success"
+          elif [[ "$DOCKET_SERVER_STATUS" == "failed" ]]; then
+            GITHUB_COMMIT_STATE="failure"
+          elif [[ "$DOCKET_SERVER_STATUS" == "error" ]]; then
+            GITHUB_COMMIT_STATE="error"
+          fi
+          
+          echo "github_commit_state=${GITHUB_COMMIT_STATE}" >> $GITHUB_OUTPUT
+          echo "commit_sha_output=${COMMIT_SHA}" >> $GITHUB_OUTPUT
+          echo "details_url_output=${DETAILS_URL}" >> $GITHUB_OUTPUT
+          echo "summary_output=${SUMMARY}" >> $GITHUB_OUTPUT
+          echo "context_label_output=${CONTEXT_LABEL}" >> $GITHUB_OUTPUT
+
+      - name: Set Final Commit Status
+        uses: actions/github-script@v7
+        if: steps.qa_data.outputs.commit_sha_output != '' && steps.qa_data.outputs.commit_sha_output != null
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const commitSha = "${{ steps.qa_data.outputs.commit_sha_output }}";
+            const state = "${{ steps.qa_data.outputs.github_commit_state }}";
+            const targetUrl = "${{ steps.qa_data.outputs.details_url_output }}";
+            let description = "${{ steps.qa_data.outputs.summary_output }}";
+            if (!description) {
+              description = `Docket QA: ${state}`;
+            }
+            description = description.substring(0, 140); 
+
+            const contextLabel = "${{ steps.qa_data.outputs.context_label_output }}";
+
+            core.info(`Setting commit status for SHA: ${commitSha} to '${state}' with context '${contextLabel}'`);
+            try {
+              await github.rest.repos.createCommitStatus({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                sha: commitSha,
+                state: state,
+                target_url: targetUrl,
+                description: description,
+                context: contextLabel
+              });
+              core.info("Commit status set successfully.");
+
+              if (state !== 'success') {
+                core.setFailed(`Docket QA tests reported as '${state}'. Summary: ${description}`);
+              }
+            } catch (error) {
+              core.setFailed(`Failed to set commit status: ${error.message}`);
+              core.error(JSON.stringify(error));
+            }
 ```
 
-<Tip>
+Lastly, take a look at your deploy action, and optionally, add Docket QA runs as a blocking step (with manual unblocking if it does fail)\!
 
-Each **title** and **subtitle** creates an anchor and also shows up on the table of contents on the right.
+```yaml
+      - name: Wait for Docket QA Status
+        id: check_qa_status
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const commitSha = "${{ steps.resolve_final_sha.outputs.commit_sha }}";
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const expectedContext = "ci/docket-qa"; // Ensure this context name is correct
+            let qaPassed = false;
+            let finalQaState = "pending"; // To store the terminal state if not success
 
-</Tip>
+            core.info(`Waiting for commit status on SHA: ${commitSha}, Context: ${expectedContext}`);
 
-## Text Formatting
+            // Timeout after X minutes (e.g. 30 * 60 * 1000 ms)
+            const timeoutMs = parseInt("${{ vars.QA_TIMEOUT_MINUTES || 30 }}") * 60 * 1000;
+            const pollIntervalMs = 30 * 1000;
+            const startTime = Date.now();
 
-We support most markdown formatting. Simply add `**`, `_`, or `~` around text to format it.
+            while (Date.now() - startTime < timeoutMs) {
+              try {
+                const { data: statusesResponse } = await github.rest.repos.getCombinedStatusForRef({
+                  owner,
+                  repo,
+                  ref: commitSha,
+                });
+                
+                const docketStatus = statusesResponse.statuses.find(status => status.context === expectedContext);
 
-| Style         | How to write it   | Result          |
-| ------------- | ----------------- | --------------- |
-| Bold          | `**bold**`        | **bold**        |
-| Italic        | `_italic_`        | _italic_        |
-| Strikethrough | `~strikethrough~` | ~strikethrough~ |
+                if (docketStatus) {
+                  core.info(`Found status for '${expectedContext}': ${docketStatus.state}. Description: ${docketStatus.description}`);
+                  finalQaState = docketStatus.state; // Update finalQaState
+                  if (docketStatus.state === 'success') {
+                    core.info("Docket QA status is 'success'.");
+                    qaPassed = true;
+                    break; // QA Passed, exit loop
+                  } else if (docketStatus.state === 'failure' || docketStatus.state === 'error') {
+                    // Do NOT fail the step. Log a warning. qaPassed remains false.
+                    core.warning(`Docket QA status is '${docketStatus.state}'. Details: ${docketStatus.target_url || 'N/A'}`);
+                    qaPassed = false; 
+                    break; // Exit loop, QA has reached a terminal non-success state
+                  } else if (docketStatus.state === 'pending') {
+                    core.info("Docket QA status is 'pending'. Waiting...");
+                  } else {
+                    core.info(`Docket QA status is '${docketStatus.state}'. Waiting...`);
+                  }
+                } else {
+                  core.info(`No status found yet for context '${expectedContext}' on SHA ${commitSha}. Waiting...`);
+                  finalQaState = "not_found"; // Update if no status found yet
+                }
+              } catch (error) {
+                finalQaState = "error_fetching";
+                // Do NOT fail the step. Log a warning.
+                if (error.status === 404) {
+                    core.info(`No statuses found for ref ${commitSha} (404). Waiting...`);
+                } else {
+                    core.warning(`Error fetching commit statuses: ${error.message}. Retrying...`);
+                }
+              }
+              await new Promise(resolve => setTimeout(resolve, pollIntervalMs));
+            }
 
-You can combine these. For example, write `**_bold and italic_**` to get **_bold and italic_** text.
+            // After loop, determine final output based on qaPassed
+            if (qaPassed) {
+              core.info("Docket QA Passed!");
+              core.setOutput('qa_passed', 'true');
+            } else {
+              // Log appropriate warning based on why QA didn't pass
+              if (Date.now() - startTime >= timeoutMs && (finalQaState === 'pending' || finalQaState === 'not_found' || finalQaState === 'error_fetching')) {
+                core.warning(`Timed out after ${timeoutMs / 60000} minutes waiting for Docket QA status on SHA ${commitSha} to be 'success'. Last known state: ${finalQaState}. QA is considered FAILED.`);
+              } else if (finalQaState === 'failure' || finalQaState === 'error') {
+                core.warning(`Docket QA for SHA ${commitSha} resulted in '${finalQaState}'. QA is considered FAILED.`);
+              } else { 
+                 core.warning(`Docket QA for SHA ${commitSha} did not achieve 'success'. Last known state: ${finalQaState}. QA is considered FAILED.`);
+              }
+              core.setOutput('qa_passed', 'false');
+            }
+            // This script step itself should not fail due to QA outcome.
+            // It has set the 'qa_passed' output which will drive the workflow logic.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Ensure token is available to the script
 
-You need to use HTML to write superscript and subscript text. That is, add `<sup>` or `<sub>` around your text.
-
-| Text Size   | How to write it          | Result                 |
-| ----------- | ------------------------ | ---------------------- |
-| Superscript | `<sup>superscript</sup>` | <sup>superscript</sup> |
-| Subscript   | `<sub>subscript</sub>`   | <sub>subscript</sub>   |
-
-## Linking to Pages
-
-You can add a link by wrapping text in `[]()`. You would write `[link to google](https://google.com)` to [link to google](https://google.com).
-
-Links to pages in your docs need to be root-relative. Basically, you should include the entire folder path. For example, `[link to text](/writing-content/text)` links to the page "Text" in our components section.
-
-Relative links like `[link to text](../text)` will open slower because we cannot optimize them as easily.
-
-## Blockquotes
-
-### Singleline
-
-To create a blockquote, add a `>` in front of a paragraph.
-
-> Dorothy followed her through many of the beautiful rooms in her castle.
-
-```md
-> Dorothy followed her through many of the beautiful rooms in her castle.
-```
-
-### Multiline
-
-> Dorothy followed her through many of the beautiful rooms in her castle.
->
-> The Witch bade her clean the pots and kettles and sweep the floor and keep the fire fed with wood.
-
-```md
-> Dorothy followed her through many of the beautiful rooms in her castle.
->
-> The Witch bade her clean the pots and kettles and sweep the floor and keep the fire fed with wood.
-```
-
-### LaTeX
-
-Mintlify supports [LaTeX](https://www.latex-project.org) through the Latex component.
-
-<Latex>8 x (vk x H1 - H2) = (0,1)</Latex>
-
-```md
-<Latex>8 x (vk x H1 - H2) = (0,1)</Latex>
+      # <<< NEW STEP: Manual Approval if QA Failed >>>
+      - name: Manual Approval if QA Failed (web-final)
+        id: manual_approval_web # Unique ID for this approval step
+        if: steps.check_qa_status.outputs.qa_passed == 'false' # Only run if QA failed
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ secrets.GITHUB_TOKEN }}
+          approvers: boris, nishant # <--- Add your usernames here
+          minimum-approvals: 1
+          issue-title: "QA Failed: Manual approval for web-final tag ${{ steps.resolve_final_sha.outputs.tag_name }}"
+          issue-body: |
+            Docket QA checks failed for commit `${{ steps.resolve_final_sha.outputs.commit_sha }}` (tag `${{ steps.resolve_final_sha.outputs.tag_name }}`).
+            Deployment to `web-final` requires manual approval.
+            Please review the QA results and **comment with `/approve` or `/reject` on the issue created by this step.**
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 ```
