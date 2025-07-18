@@ -25,7 +25,8 @@
           "essentials/running-test",
           "essentials/ci-integration",
           "essentials/agent-context",
-          "essentials/notifications"
+          "essentials/notifications",
+          "essentials/file-upload"
         ]
       }
     ]
