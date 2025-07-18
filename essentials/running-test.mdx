@@ -1,59 +1,29 @@
 ---
-title: 'Running a Test'
-description: 'Different ways to run a test on Docket'
-icon: 'play'
+title: "Running a Test"
+description: "Different ways to run a test on Docket"
+icon: "play"
 ---
 
-<img
-  style={{ borderRadius: '0.5rem' }}
-  src="https://mintlify-assets.b-cdn.net/bigbend.jpg"
-/>
+### Manual run
 
-## Image
+You can manually trigger test runs on a individual test level or a test suite level. To trigger a run for an individual test, click the play icon on the test row: 
 
-### Using Markdown
+![Screenshot 2025-07-17 at 5.14.19 PM.png](/images/Screenshot2025-07-17at5.14.19PM.png)
 
-The [markdown syntax](https://www.markdownguide.org/basic-syntax/#images) lets you add images using the following code
+To trigger a run for all tests in a test suite, go to the test suites tab and click play icon on any of the suites: 
 
-```md
-![title](/path/image.jpg)
-```
+![Screenshot 2025-07-17 at 5.15.41 PM.png](/images/Screenshot2025-07-17at5.15.41PM.png)
 
-Note that the image file size must be less than 5MB. Otherwise, we recommend hosting on a service like [Cloudinary](https://cloudinary.com/) or [S3](https://aws.amazon.com/s3/). You can then use that URL and embed.
+### CI/CD integration
 
-### Using Embeds
+You can trigger a test suite to run as part of your CI/CD pipeline, see the [CI Integration](essentials/ci-integration) tab for more details on how to set this up.
 
-To get more customizability with images, you can also use [embeds](/writing-content/embed) to add images
+### Scheduling a Run
 
-```html
-<img height="200" src="/path/image.jpg" />
-```
+To schedule a run, you can click the edit icon on a test suite to expose the scheduling menu. 
 
-## Embeds and HTML elements
+![Screenshot 2025-07-17 at 5.17.40 PM.png](/images/Screenshot2025-07-17at5.17.40PM.png)
 
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/4KzFe50RQkQ"
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowFullScreen
-  style={{ width: '100%', borderRadius: '0.5rem' }}
-></iframe>
+![Screenshot 2025-07-17 at 5.18.25 PM.png](/images/Screenshot2025-07-17at5.18.25PM.png)
 
-<br />
-
-<Tip>
-
-Mintlify supports [HTML tags in Markdown](https://www.markdownguide.org/basic-syntax/#html). This is helpful if you prefer HTML tags to Markdown syntax, and lets you create documentation with infinite flexibility.
-
-</Tip>
-
-### iFrames
-
-Loads another HTML page within the document. Most commonly used for embedding videos.
-
-```html
-<iframe src="https://www.youtube.com/embed/4KzFe50RQkQ"> </iframe>
-```
+This will allow you to schedule test runs on a Daily, Weekly, or Hourly cadence. You can also specify your on custom cron tab schedule. When specifying this schedule, please follow the format of [AWS EventBridge](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-scheduled-rule-pattern.html#eb-cron-expressions). An easy way to figure out the schedule is to copy that entire page into ChatGPT and describe your desired in plain english, and ask it to output the right result (we will embed this functionality into Docket soon as well\!). 
