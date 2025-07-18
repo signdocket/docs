@@ -1,87 +1,19 @@
 ---
-title: 'Agent Context'
-description: 'Context provided to the Docket AI agents about how to interact with your website'
-icon: 'folder-grid'
+title: "Agent Context"
+description: "Context provided to the Docket AI agents about how to interact with your website"
+icon: "folder-grid"
 ---
 
-The navigation menu is the list of links on every website.
+### Agent Rules
 
-You will likely update `docs.json` every time you add a new page. Pages do not show up automatically.
+If there is certain context that is specific to your application, you can create an agent rule for it. These rules injected into Docket's system prompt when running your tests to help the agent navigate your applications. Examples of things to create an agent rule might be: 
 
-## Navigation syntax
+- The “Create Project” button is only visible after hovering over the sidebar and clicking the plus icon
+- The onboarding modal must be dismissed before any part of the dashboard becomes interactive
+- To invite a teammate, go to “Workspace Settings” via the top-right dropdown, then open the “Members” tab
+- “Add to Cart” is labeled as “Reserve Now” on product detail pages for rental items
+- The “Submit for Approval” button only appears after all form fields are valid and the form auto-saves
 
-Our navigation syntax is recursive which means you can make nested navigation groups. You don't need to include `.mdx` in page names.
+You can configure these agent rules from the agent rule tab on the Docket dashboard. 
 
-<CodeGroup>
-
-```json Regular Navigation
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Getting Started",
-          "pages": ["quickstart"]
-        }
-      ]
-    }
-  ]
-}
-```
-
-```json Nested Navigation
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Getting Started",
-          "pages": [
-            "quickstart",
-            {
-              "group": "Nested Reference Pages",
-              "pages": ["nested-reference-page"]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-</CodeGroup>
-
-## Folders
-
-Simply put your MDX files in folders and update the paths in `docs.json`.
-
-For example, to have a page at `https://yoursite.com/your-folder/your-page` you would make a folder called `your-folder` containing an MDX file called `your-page.mdx`.
-
-<Warning>
-
-You cannot use `api` for the name of a folder unless you nest it inside another folder. Mintlify uses Next.js which reserves the top-level `api` folder for internal server calls. A folder name such as `api-reference` would be accepted.
-
-</Warning>
-
-```json Navigation With Folder
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Group Name",
-          "pages": ["your-folder/your-page"]
-        }
-      ]
-    }
-  ]
-}
-```
-
-## Hidden Pages
-
-MDX files not included in `docs.json` will not show up in the sidebar but are accessible through the search bar and by linking directly to them.
+![Screenshot 2025-07-17 at 6.25.22 PM.png](/images/Screenshot2025-07-17at6.25.22PM.png)
