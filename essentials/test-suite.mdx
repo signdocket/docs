@@ -6,30 +6,30 @@ icon: "folder"
 
 ### Test Suite
 
-Test Suites are a collection of tests on Docket. They are used to organize tests into logical groups that you might want to run together.
+Test suites are collections of tests on Docket. They are used to organize tests into logical groups that you might want to run together.
 
 ### Creating a test suite
 
-To create a test suite, proceed to the test suites tab.
+To create a test suite, navigate to the test suites tab.
 
-![Screenshot 2025-07-17 at 3.52.48 PM.png](/images/Screenshot2025-07-17at3.52.48PM.png)
+![Screenshot 2025-07-17 at 3.52.48 PM.png](/images/Screenshot2025-07-17at3.52.48PM.png)
 
-From there, click the "New Test" button and give your test suite a suitable name.
+From there, click the "New Test Suite" button and give your test suite a suitable name.
 
-![Screenshot 2025-07-17 at 3.54.14 PM.png](/images/Screenshot2025-07-17at3.54.14PM.png)
+![Screenshot 2025-07-27 at 4.03.55 PM.png](/images/Screenshot_2025-07-27_at_4.03.55_PM.png)
 
-### Login Modules
+### Accounts
 
-You can assign a login module to a test suite, which will be used to authenticate all tests in that test suite. The instructions from the login module will be executed first, then the state (cookies, local storage) that the browser ends up in will be copied over as a starting point in all other test runs.
+Think of accounts as username and password configurations that Docket uses to log in. You can assign accounts to test suites, which will then use that account to authenticate for all tests in the suite. 
 
-You must provide the "Navigate to..." instruction at the beginning of your login module. Here is an example:
+Docket will navigate to the provided URL and log in with the credentials. The browser state (cookies, local storage) that results from this login will be copied as the starting point for all other test runs.
 
-![Screenshot 2025-07-17 at 3.59.28 PM.png](/images/Screenshot2025-07-17at3.59.28PM.png)
+![Screenshot 2025-07-17 at 3.59.28 PM.png](/images/Screenshot_2025-07-27_at_4.16.56_PM.png)
 
-Then you can assign this as the login module for any test suite:
+You can then assign this account as the login module for any test suite:
 
-![Screenshot 2025-07-17 at 3.59.56 PM.png](/images/Screenshot2025-07-17at3.59.56PM.png)
+![Screenshot 2025-07-17 at 3.59.56 PM.png](/images/Screenshot2025-07-17at3.59.56PM.png)
 
 ### Scheduling a test suite
 
-You can also schedule all tests in a given test suite to run at some cadence. See the [scheduling section](https://docket-dcd24ade.mintlify.app/essentials/running-test#scheduling-a-run) on the test creation page for instructions on how to set this up.
+You can also schedule all tests in a given test suite to run at regular intervals. See the [scheduling section](https://docket-dcd24ade.mintlify.app/essentials/running-test#scheduling-a-run) on the test creation page for instructions on how to set this up.
