@@ -1,71 +1,70 @@
 ---
-title: "Creating a test"
+title: "Creating a Test"
 description: "How to create a test on Docket"
 icon: "pen"
 ---
 
 ### Test Suite
 
-First, you should go to the [test suites](/essentials/test-suite) to create a test suite that the test can be included in.
+First, go to the [test suites](/essentials/test-suite) page to create a test suite that the test will belong to.
 
 ### Test Metadata
 
-You will begin by providing a title, URL, and test suite for the test.
+Begin by providing a title, URL, and selecting a test suite for the test.
 
 ![Screenshot 2025-07-17 at 4.03.12 PM.png](/images/Screenshot2025-07-17at4.03.12PM.png)
 
-The URL will be the starting point for the test. The Docket Browser agent will automatically navigate there and then start executing your instruction set.
+The URL is the starting point for the test. The Docket Browser agent will automatically navigate to this URL and begin executing your instruction set.
 
-### Writing a good test
+### Writing a Good Test
 
-You write tests in Docket as a single prompt. Think of it as describing what you would like to see tested to a human who is savy as using web applications but has never interacted with your application before.
+You write tests in Docket as a single prompt. Think of it as describing what you want tested to a human who is savvy with web applications but has never interacted with yours before.
 
-Each test should try to cover a single objective. Examples of objectives might include:
+Each test should cover a single objective. Examples of test objectives include:
 
-- Adding item to a shopping cart
-- Completing the onboarding form for an application
-- Testing the filtering on a table
-- Searching a query and verifying top result is relevant
+- Adding an item to a shopping cart  
+- Completing the onboarding form for an application  
+- Testing the filtering functionality on a table  
+- Searching a query and verifying that the top result is relevant  
 
-To write a test simply input your prompt into the instructions section of the test creation page.
+To write a test, simply enter your prompt into the "Instructions" section on the test creation page.
 
 ![Screenshot 2025-07-17 at 4.18.22 PM.png](/images/Screenshot2025-07-17at4.18.22PM.png)
 
-### Assertions in tests
+### Assertions in Tests
 
-If you would like Docket to perform an explict check on any behavior of your application (e.g. click clear cart actually clears the cart), then you can tell Docket to `assert` for that behaviour in your application. This will result in Docket making an "assertion" action where it will take all the context it has on your test run and a screenshot of the page to assess whether or not your assertion was met. If not, Docket will fail the test. If met, Docket will proceed with the test.
+If you'd like Docket to perform an explicit check on the behavior of your application (e.g., ensuring that clicking "Clear Cart" actually clears the cart), you can instruct Docket to `assert` that behavior. This tells Docket to perform an "assertion" action—evaluating the result using all the test context and a screenshot of the page. If the assertion fails, Docket will mark the test as failed. If it passes, the test will continue.
 
-When using the assert statement, you should be verify specific in the behaviour you would like to verify. If there is room for ambigiouty, then the test might end up being flakey. Here are some examples of poorly crafted asserts and how you might go about fixing them:
+When using the `assert` statement, be specific about the behavior you're verifying. If the instruction is ambiguous, the test might become flaky. Here are examples of common mistakes and how to fix them:
 
-| Problem                                | Bad example                                                        | Corrected example                                               |
-| -------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------- |
-| Missing assert keyword                 | Look for search results on the main body                           | Assert that there are search results displayed on the main body |
+| Problem                                | Bad Example                                                        | Improved Example                                                 |
+|----------------------------------------|--------------------------------------------------------------------|------------------------------------------------------------------|
+| Missing `assert` keyword               | Look for search results on the main body                           | Assert that there are search results displayed on the main body |
 | Ambiguous assertion                    | Assert that the order of the results is correct                    | Assert that the search results are sorted by date               |
-| Assertion about imperceivable details  | Assert that the color of line divider is #ff5733                   | Assert that the color of the divider looks red                  |
-| Subjective assertion                   | Asserted that the page looks well designed                         | Assert that no text in the table overflows its cell             |
-| Assertion depends on changes over time | The video plays a 10-second advertisement for an insurance product | N/A                                                             |
+| Assertion about imperceptible details  | Assert that the color of the line divider is #ff5733               | Assert that the divider appears red                             |
+| Subjective assertion                   | Assert that the page looks well-designed                           | Assert that no text in the table overflows its cell             |
+| Assertion depends on time-based change | The video plays a 10-second ad for an insurance product            | N/A                                                              |
 
-<Note>
-  Other terms such as `verify` / `check` /`confirm` /`ensure` / `validate` also result in an assertion action, but we  recommend  `assert`  as Docket has been specially trained to respond to that word.
-</Note>
+> **Note**  
+> Other terms such as `verify`, `check`, `confirm`, `ensure`, or `validate` will also result in an assertion action. However, we recommend using `assert`, as Docket has been specially trained to respond to this term.
 
-### Early termination
+### Early Termination
 
-Docket has the ability to mark the test as failed without going through the entire flow if it deems: 
+Docket can mark a test as failed without completing the entire flow if it detects:
 
-- The feature is not immediately findable and requires exploring multiple menus or sections
-- The interface uses non-standard or unintuitive patterns to complete the task
-- The task takes more steps or attempts than expected for a straightforward action
-- There are visible errors, missing features, or unresponsive UI elements
-- The interface creates confusion due to unclear labeling, layout, or navigation logic
-- The tester is unsure how to proceed because the next step isn’t obvious or discoverable
+- The feature is not easily findable and requires navigating through multiple menus or sections  
+- The interface uses non-standard or unintuitive patterns  
+- The task takes significantly more steps or retries than expected  
+- There are visible errors, missing features, or unresponsive UI elements  
+- The interface is confusing due to unclear labeling, layout, or navigation  
+- The tester is unsure how to proceed because the next step isn’t obvious or discoverable  
 
-Even if there is not explicit assertion, encountering any of the above will mark the test as failed unless otherwise specified. You can craft your prompt accordingly if you would like to overwrite any of these instructions.
+Even without an explicit assertion, encountering any of the above will cause the test to fail—unless specified otherwise. You can craft your prompt accordingly if you'd like to override this behavior.
 
-### Running a simulation
+### Running a Simulation
 
-Simulations on the test creation page are available to give to live preview of a test run. They use the exact same infrastructure as a real test run, so you get to view behaviour ahead of a real test run. To run a simulation, click the "Run" button present in the instructions input header. 
+Simulations on the test creation page give you a live preview of a test run. They use the same infrastructure as a real test, so you can observe behavior ahead of time. To run a simulation, click the "Run" button in the instructions input header.
 
 ![Screenshot 2025-07-17 at 5.06.46 PM.png](/images/Screenshot2025-07-17at5.06.46PM.png)
 
-You give will a live feed of your test in the Test Preview window along with the Docket agent's reasoning present in the "Actions" tab. 
+You’ll get a live feed of the test in the **Test Preview** window, along with the Docket agent’s reasoning shown in the **Actions** tab.
