@@ -12,7 +12,7 @@ First, go to the [test suites](/essentials/test-suite) page to create a test sui
 
 Begin by providing a title, URL, and selecting a test suite for the test.
 
-![Screenshot 2025-07-17 at 4.03.12 PM.png](/images/Screenshot2025-07-17at4.03.12PM.png)
+![Screenshot 2025-07-17 at 4.03.12 PM.png](/images/Screenshot2025-07-17at4.03.12PM.png)
 
 The URL is the starting point for the test. The Docket Browser agent will automatically navigate to this URL and begin executing your instruction set.
 
@@ -29,7 +29,53 @@ Each test should cover a single objective. Examples of test objectives include:
 
 To write a test, simply enter your prompt into the "Instructions" section on the test creation page.
 
-![Screenshot 2025-07-17 at 4.18.22 PM.png](/images/Screenshot2025-07-17at4.18.22PM.png)
+![Screenshot 2025-07-17 at 4.18.22 PM.png](/images/Screenshot2025-07-17at4.18.22PM.png)
+
+### Test Variables
+
+Docket supports two types of variables that can be used to make your tests more dynamic and reusable. Variables can be created in the Variables tab of the test and inserted into your test instructions by pressing the `@` key while writing.
+
+![Screenshot 2025-07-17 at 4.18.22 PM.png](/images/Screenshot_2025-08-27_at_8.23.59_AM.png)
+
+#### Text Variables
+
+Text variables are simple placeholders that get replaced with their configured values when your test runs. They're ideal for making tests flexible and reusable across different environments or scenarios.
+
+**Common use cases:**
+- **Credentials**: Usernames and passwords when not using the accounts feature
+- **Test data**: Product names, user IDs, or any values that you might want to change often
+
+**Example usage:**
+```
+Log in with username @test_username and password @test_password.
+Search for @product_name and add it to the cart.
+```
+
+#### Email Variables
+
+Email variables are more sophisticated and generate a unique mailbox for each test run using plus addressing. This creates a dedicated email address that the agent can monitor during that specific test execution.
+
+Key features of email variables:
+- **Unique per run**: Each test execution gets its own email address (e.g., `baseaddress+unique123@domain.com`)
+- **Agent accessibility**: The agent can only check emails sent to this specific unique address during the test run
+- **Full address reference**: You can reference the complete generated email address in your instructions when you need to input it into forms
+
+**Example usage:**
+```
+Register a new account using @registration_email as the email address. 
+After registering, get the confirmation code from the email and use it to confirm your account
+```
+
+In this example, `@registration_email` would be replaced with the unique email address generated for that test run, and the agent would monitor only that specific mailbox for incoming emails.
+
+#### Using Variables in Instructions
+
+To insert variables while writing test instructions:
+1. Press the `@` key in the instructions text area
+2. Select from your existing variables or create a new one
+3. The variable will appear as `@variable_name` in your instructions
+
+Variables make your tests more maintainable and allow you to easily run the same test logic with different data across multiple environments or scenarios.
 
 ### Assertions in Tests
 
@@ -57,7 +103,7 @@ Docket can mark a test as failed without completing the entire flow if it detect
 - The task takes significantly more steps or retries than expected  
 - There are visible errors, missing features, or unresponsive UI elements  
 - The interface is confusing due to unclear labeling, layout, or navigation  
-- The tester is unsure how to proceed because the next step isn’t obvious or discoverable  
+- The tester is unsure how to proceed because the next step isn't obvious or discoverable  
 
 Even without an explicit assertion, encountering any of the above will cause the test to fail—unless specified otherwise. You can craft your prompt accordingly if you'd like to override this behavior.
 
@@ -65,6 +111,27 @@ Even without an explicit assertion, encountering any of the above will cause the
 
 Simulations on the test creation page give you a live preview of a test run. They use the same infrastructure as a real test, so you can observe behavior ahead of time. To run a simulation, click the "Run" button in the instructions input header.
 
-![Screenshot 2025-07-17 at 5.06.46 PM.png](/images/Screenshot2025-07-17at5.06.46PM.png)
+![Screenshot 2025-07-17 at 5.06.46 PM.png](/images/Screenshot2025-07-17at5.06.46PM.png)
 
-You’ll get a live feed of the test in the **Test Preview** window, along with the Docket agent’s reasoning shown in the **Actions** tab.
+You'll get a live feed of the test in the **Test Preview** window, along with the Docket agent's reasoning shown in the **Actions** tab.
+
+### Advanced Test Configuration
+
+Configure additional settings to fine-tune your test execution behavior.
+
+<img src="/images/Screenshot_2025-08-27_at_8.38.26_AM.png" alt="Advanced Test Configuration" width="400" />
+
+#### Browser Zoom Level
+Control the browser's zoom level (equivalent to `Ctrl +/-` in Chromium). Useful for testing responsive design and accessibility.
+**Options:** 50%, 75%, 100% (default), 125%, 150%, 200%
+
+#### Test Retries
+Configure automatic retries when a test fails. Docket will re-run the entire test from the beginning.
+**Options:** No retries (default), 1-3 retries
+
+#### Test Status
+- **Active** (default): Test runs in all scenarios
+- **Paused**: Test is excluded from scheduled runs, CI/CD, and group executions
+
+#### Two-Factor Authentication (2FA)
+Store TOTP secrets for automated 2FA during testing. Enter the secret key from your authenticator app setup, and Docket will automatically generate codes when prompted.
