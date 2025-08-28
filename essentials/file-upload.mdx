@@ -4,10 +4,12 @@ description: "Uploading a file to your web application during a test"
 icon: "paperclip"
 ---
 
-### Uploading a file during a test
+### Uploading files during a test
 
-You can click the paperclip icon on the header of the test instructions input to open the file selector. 
+You can click the Files tab to upload and manage files for your test. 
 
-![Screenshot 2025-07-18 at 3.46.46 PM.png](/images/Screenshot2025-07-18at3.46.46PM.png)
+![Screenshot 2025-07-18 at 3.46.46 PM.png](/images/Screenshot_2025-08-27_at_6.27.50_PM.png)
 
-Once you've picked a file, you can simply say `upload file` as part of any test prompt and Docket will automatically place that file in the relevant input component on your webpage. For example, you might prompt Docket with "upload file into the profile picture input". 
+You can upload multiple files as shown in the Files tab above. Each file appears with its filename and can be individually managed. 
+
+To use a specific file in your test, reference it by name: `upload "cat.jpeg" to the profile picture` or `upload "ZDummy_PDF.pdf" to the document field`. For single file uploads, simply say `upload file`. 
