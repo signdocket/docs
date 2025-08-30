@@ -1,0 +1,122 @@
+---
+title: "Webhooks"
+description: "Receive real-time notifications about test events via webhooks"
+icon: "webhook"
+---
+
+Webhooks allow you to receive real-time notifications about test events. Configure your webhook URL, shared secret, and event subscriptions in your company settings.
+
+![Screenshot 2025-07-18 at 3.46.46 PM.png](/images/Screenshot_2025-08-29_at_7.17.00_PM.png)
+
+## Supported Events
+
+- **Test Group Run Passed**: All tests in the group completed successfully
+- **Test Group Run Failed**: One or more tests failed or encountered errors  
+- **Test Group Run Stopped**: Test group run was manually stopped
+
+## Security & Verification
+
+All requests are signed with HMAC-SHA256. The `X-Docket-Signature` header contains:
+
+```
+X-Docket-Signature: v1,t=1640995200,s=a2114d57b48eac2b0fc35c4c4b4d5a8c...
+```
+
+To verify:
+1. Extract timestamp `t` and signature `s` from the header
+2. Create signed payload: `{timestamp}.{raw_request_body}`
+3. Compute HMAC-SHA256 using the shared webhook secret
+4. Compare with provided signature
+
+<CodeGroup>
+
+```python Python
+import hashlib
+import hmac
+
+def verify_webhook_signature(secret_hex: str, signature_header: str, raw_body: bytes) -> bool:
+    try:
+        parts = signature_header.split(',')
+        timestamp = int(parts[1].split('=')[1])
+        provided_signature = parts[2].split('=')[1]
+        
+        signed_payload = f"{timestamp}.{raw_body.decode()}"
+        key = bytes.fromhex(secret_hex)
+        expected_signature = hmac.new(key, signed_payload.encode(), hashlib.sha256).hexdigest()
+        
+        return hmac.compare_digest(provided_signature, expected_signature)
+    except:
+        return False
+```
+
+```javascript Node.js
+const crypto = require('crypto');
+
+function verifyWebhookSignature(secretHex, signatureHeader, rawBody) {
+    try {
+        const parts = signatureHeader.split(',');
+        const timestamp = parseInt(parts[1].split('=')[1]);
+        const providedSignature = parts[2].split('=')[1];
+        
+        const signedPayload = `${timestamp}.${rawBody}`;
+        const key = Buffer.from(secretHex, 'hex');
+        const expectedSignature = crypto
+            .createHmac('sha256', key)
+            .update(signedPayload)
+            .digest('hex');
+        
+        return crypto.timingSafeEqual(
+            Buffer.from(providedSignature, 'hex'),
+            Buffer.from(expectedSignature, 'hex')
+        );
+    } catch {
+        return false;
+    }
+}
+```
+
+</CodeGroup>
+
+## Payload Schema
+
+```json
+{
+  "event": "test_group_run_passed",
+  "payload": {
+    "id": 12345,
+    "url": "https://app.docketqa.com/dashboard/grouprun/12345",
+    "name": "API Integration Tests", 
+    "status": "passed",
+    "created_at": "2024-01-15T10:00:00Z",
+    "updated_at": "2024-01-15T10:30:00Z",
+    "tests_ran": 15,
+    "tests_passed": 15,
+    "tests_failed": 0,
+    "tests_stopped": 0,
+    "tests": [
+      {
+        "id": 67890,
+        "url": "https://app.docketqa.com/dashboard/testrun/67890",
+        "name": "User Login Flow",
+        "status": "passed",
+        "created_at": "2024-01-15T10:00:00Z",
+        "updated_at": "2024-01-15T10:05:00Z",
+        "error_message": null
+      }
+    ]
+  }
+}
+```
+
+### Key Fields
+
+- `event`: Event type (`test_group_run_passed`, `test_group_run_failed`, `test_group_run_stopped`)
+- `payload.status`: Test group status (`passed`, `failed`, `stopped`)
+- `payload.tests`: Array of individual test results
+- `payload.tests_*`: Count of tests by status
+
+## Requirements
+
+- Respond with HTTP 200-204 within 10 seconds
+- Use HTTPS endpoints only
+- Handle duplicate deliveries using `X-Docket-Idempotency-Key` header

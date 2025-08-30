@@ -26,6 +26,7 @@
           "essentials/ci-integration",
           "essentials/agent-context",
           "essentials/notifications",
+          "essentials/webhooks",
           "essentials/dedicated-mailboxes",
           "essentials/file-upload"
         ]
