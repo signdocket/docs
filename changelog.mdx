@@ -1,0 +1,28 @@
+---
+title: "Changelog"
+description: "Technical updates to Docket "
+---
+
+# 🧠 Docket Technical Changelog (Aug – Oct 2025)
+
+## **October 2025**
+- Optimized AWS + Porter cluster configuration, cutting average browser-worker CPU/memory usage by ~22%.  
+- Tuned pre-check confidence threshold and CPU allocation logic per site for more stable agent runs.
+- Added automatic weekly dependency vulnerability scans in CI/CD pipeline.  
+- Improved S3 object storage configuration with versioning + Object Lock for data integrity.
+- Refactored internal monitoring to surface agent latency, memory, and timeout metrics in dashboard.  
+
+---
+
+## **September 2025**
+- Enhanced **self-healing agent** behavior for broken selectors, delayed elements, and network retries.  
+- Introduced **usage analytics** pipeline capturing test latency, pass/fail counts, and error codes.   
+- Benchmarked and tuned Playwright concurrency profiles across different CPU classes to reduce cold-start time.  
+
+---
+
+## **August 2025**
+- Deployed full AWS + Porter environment with staging + production clusters and load-balanced worker pool.  
+- Launched new vision model for Docket
+- Introduced system health dashboard showing session errors, retries, and agent restarts.  
+- Improved Docker image build flow — reduced image size and deployment time by >30%.  

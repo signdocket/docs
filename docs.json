@@ -30,6 +30,12 @@
           "essentials/dedicated-mailboxes",
           "essentials/file-upload"
         ]
+      },
+      {
+        "group": "Support",
+        "pages": [
+          "changelog"
+        ]
       }
     ]
   },
