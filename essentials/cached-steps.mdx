@@ -20,17 +20,16 @@ To see the coordinate that Docket has captured, simply hover over the icon.
 
 ### How Cached Steps Work
 
-Cached steps execute **sequentially**, one after another, without waiting for page loads or intermediate checks.\
-This means that **accuracy of both the coordinates and annotations** is critical to test stability.
+Cached steps execute **sequentially**, one after another. In recording (or remote browser) mode, they do not waiting for page loads or self heal. Cached steps will auto wait for page loads or try to self heal during full test runs (see below). 
 
-If the app’s layout changes and the cached coordinates are no longer valid, your test can become flaky or fail unexpectedly.\
-Always make sure your cached steps are up to date after major UI changes.
+If a minor change is made to your UI, Docket will be able to self heal as long as the annotation of the cached action is correct. 
+However, after major UI changes, it is recommended you ensure your cached steps are up to date.
 
 ---
 
-### Cached Steps During Real Test Runs
+### Cached Steps During Full Test Runs
 
-When running a real test, Docket performs a **pre-check** before executing each cached step.\
+When running a full test (manaully, scheduled, or part of CI/CD), Docket performs a **pre-check** before executing each cached step.\
 If the page hasn’t loaded yet or the click coordinate seems inconsistent with the annotation, Docket will trigger its **AI vision model** to attempt a **self-heal**.
 
 During self-healing, Docket uses:
@@ -51,7 +50,7 @@ Here’s how to make them effective:
 
 #### Scroll Actions
 
-Describe not only _where_ to scroll, but also _what should be revealed_.
+Describe not only _where_ to scroll, but also _what should be revealed_. You should always include elements that will be interacted with post-scroll as part of actions that need to be revealed. 
 
 ✅ **Good Example:**
 
@@ -79,7 +78,7 @@ Specify the exact element or purpose of the action.
 
 | Issue                      | Description                                   | Example                                                  |
 | -------------------------- | --------------------------------------------- | -------------------------------------------------------- |
-| **Outdated Coordinates**   | UI layout changed, making coordinates invalid | Button moved after redesign                              |
+| **Outdated Coordinates**   | UX changed, making coordinates invalid        | A new banner moves element off the page, can't self heal |
 | **Vague Annotations**      | Unclear what element is being clicked         | “Click on link” when multiple exist                      |
 | **Missing Scroll Context** | Scrolls recorded but not described            | “Scroll down” instead of “Scroll to reveal footer links” |
 | **Redundant Steps**        | Repeated clicks on the same element           | Duplicate interactions                                   |
@@ -88,7 +87,7 @@ Specify the exact element or purpose of the action.
 
 ### Best Practices
 
-- Re-record cached steps after UI updates
+- Re-record cached steps after big UI updates
 - Review annotations for clarity
 - Keep English instructions specific and descriptive
 - Minimize unnecessary actions
