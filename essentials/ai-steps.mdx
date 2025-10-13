@@ -33,10 +33,9 @@ This style tells Docket exactly what to do, one action at a time. It’s ideal f
 
 **Pros:**
 - Predictable and repeatable  
-- Easier to debug and isolate issues  
-- Good for pixel-precise UI validation  
 
 **Cons:**
+- [Cached steps](/essentials/cached-steps) are faster and more accurate in this case
 - Can be verbose for longer flows  
 - May need updating after UI redesigns  
 
@@ -47,7 +46,6 @@ It’s useful for dynamic interfaces, forms, or multi-step workflows that may ch
 
 **Example:**
 - Login using "nishant@docketqa.com" and "password123".
-
 
 **Pros:**
 - Short and human-readable  
@@ -62,7 +60,7 @@ It’s useful for dynamic interfaces, forms, or multi-step workflows that may ch
 
 ### Special Capabilities
 
-Certain actions—such as **sending or checking emails** and **uploading files**—can only be performed using AI steps. These actions require contextual reasoning and browser-level access that cached steps don’t support.
+Certain actions — such as [**sending or checking emails**](essentials/dedicated-mailboxes) and [**uploading files**](essentials/file-upload) — can only be performed using AI steps. These actions require contextual reasoning and browser-level access that cached steps don’t support.
 
 **Examples:**
 - Upload the file "contract.pdf" to the upload input on the page.
@@ -101,14 +99,14 @@ Follow these guidelines for clarity and precision:
 | Time-based check | Assert that the video plays a 10-second ad | Avoid timing-based assertions |
 
 > **Note**  
-> Synonyms like `verify`, `check`, `ensure`, or `validate` are also recognized as assertions,  
-> but we recommend using `assert` for consistency and accuracy.
+> Writing words like `verify`, `check`, `ensure`, `assert` or `validate` during an AI step may also result in an assertion action.
+> but we recommend using explicit `assert` actions for consistency and accuracy.
 
 ---
 
 ### Early Termination
 
-Docket can mark a test as failed without completing the entire flow if it detects usability issues that would frustrate a real user.
+Docket can mark a test as failed without completing the entire flow if, during self heal or AI steps, it detects usability issues that would frustrate a real user.
 
 The agent will fail the test early if it encounters:
 
@@ -154,12 +152,22 @@ You can combine [cached steps](/essentials/cached-steps) and AI steps to achieve
 - [AI Step] Login using "nishant@docketqa.com" and "password123"
 - [Assert Step] Assert that the dashboard loads successfully
 
+#### Important: Page State After AI Steps
+
+When using AI steps followed by cached steps, it's **critical** to consider where your AI step will leave the page once complete. Cached steps rely on specific screen coordinates, so if an AI step ends on an unexpected page state, scroll position, or modal, subsequent cached actions may fail or become flaky.
+
+**Best Practices:**
+- Be explicit about the final state in your AI step (e.g., "Login and ensure you're on the dashboard")
+- Verify the page has fully loaded before transitioning to cached steps
+- If using modals or overlays, explicitly close them in the AI step if cached steps follow
+- Consider adding a brief assertion to confirm the expected page state before cached steps execute
+
+**Example:**
+```
+❌ Bad: "Login" (leaves page state ambiguous)
+✅ Good: "Login using credentials and wait for the dashboard to fully load"
+```
+
+This ensures cached steps start from a predictable, consistent state and reduces test flakiness.
+
 > **Learn more**: See [Cached Steps](/essentials/cached-steps) to understand how coordinate-based actions work and when to use them.
-
-
----
-
-### Summary
-
-AI steps let Docket act like an intelligent QA engineer—capable of reasoning about your app, understanding page state, and verifying outcomes based on real visual context.  
-By blending **AI steps** for logic, **cached steps** for precision, and **asserts** for validation, you can build robust, adaptive, and human-like test flows that evolve with your product.
