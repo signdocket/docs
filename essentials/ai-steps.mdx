@@ -1,0 +1,129 @@
+---
+title: "AI Steps"
+description: "How to write AI-driven test steps in Docket"
+icon: "sparkles"
+---
+
+### Overview
+
+AI steps are natural-language instructions that tell Docket’s intelligent agent what to **do** or **verify** in your application.  
+Unlike cached steps, which replay recorded coordinates, AI steps use Docket’s **vision and reasoning models** to dynamically interpret your instructions and act accordingly.
+
+There are two main types of AI steps in Docket:
+1. **AI Step** – perform an action  
+2. **Assert** – verify a condition  
+
+You can mix and match AI steps and cached steps to build powerful, adaptive, and self-healing tests.
+
+---
+
+### AI Step
+
+An **AI Step** tells Docket to perform an action in your application. You can write these in two styles depending on how explicit or goal-oriented you want to be.
+
+#### Explicit (Step-by-Step)
+
+This style tells Docket exactly what to do, one action at a time. It’s ideal for debugging or when you need strict determinism.
+
+**Example:**
+- Click on the "Login" button. Click on the "Email" input field. Type "nishant@docketqa.com". Click on the "Password" input field. Type "password123". Click on the "Sign In" button.
+
+
+**Pros:**
+- Predictable and repeatable  
+- Easier to debug and isolate issues  
+- Good for pixel-precise UI validation  
+
+**Cons:**
+- Can be verbose for longer flows  
+- May need updating after UI redesigns  
+
+#### Objective-Based
+
+This style focuses on *what* you want to achieve rather than *how* to achieve it.  
+It’s useful for dynamic interfaces, forms, or multi-step workflows that may change layout.
+
+**Example:**
+- Login using "nishant@docketqa.com" and "password123".
+
+
+**Pros:**
+- Short and human-readable  
+- More resilient to UI changes  
+- Uses full page context and reasoning  
+
+**Cons:**
+- Less deterministic when multiple valid paths exist  
+- Can be harder to debug exact click paths  
+
+---
+
+### Special Capabilities
+
+Certain actions—such as **sending or checking emails** and **uploading files**—can only be performed using AI steps. These actions require contextual reasoning and browser-level access that cached steps don’t support.
+
+**Examples:**
+- Upload the file "contract.pdf" to the upload input on the page.
+- Check the inbox for a verification code and enter it into the confirmation field.
+
+
+Docket’s agent will handle the entire sequence intelligently, linking file uploads and email variables (like `@registration_email`) to the current test run.
+
+---
+
+### Assert Step
+
+An **Assert** step tells Docket to verify that a condition holds true at the current state of your application.  
+When you write an assertion, Docket takes a **screenshot**, analyzes the page using its **vision model**, and uses prior test history to understand context.
+
+**Examples:**
+- Assert that the dashboard shows at least 3 recent orders.
+- Assert that a success message appears saying "Account created successfully."
+
+
+If the assertion fails, Docket will mark the test as **failed**, capture a screenshot and reasoning log, and continue or stop depending on your test configuration.
+
+---
+
+### Writing Good Assertions
+
+Well-written assertions make your tests reliable and meaningful. Poorly defined ones can make results ambiguous.  
+Follow these guidelines for clarity and precision:
+
+| Problem | Bad Example | Improved Example |
+|----------|--------------|------------------|
+| Missing `assert` keyword | Look for search results on the main body | **Assert** that there are search results displayed on the main body |
+| Ambiguous goal | Assert that results are correct | Assert that search results are sorted by date |
+| Unverifiable statement | Assert that the page looks good | Assert that no text in the table overflows its cell |
+| Too precise for minor details | Assert that the divider color is #ff5733 | Assert that the divider appears red |
+| Time-based check | Assert that the video plays a 10-second ad | Avoid timing-based assertions |
+
+> **Note**  
+> Synonyms like `verify`, `check`, `ensure`, or `validate` are also recognized as assertions,  
+> but we recommend using `assert` for consistency and accuracy.
+
+---
+
+### Combining Cached and AI Steps
+
+You can combine cached steps and AI steps to achieve a balance of precision and flexibility.
+
+| Use Case | Recommended Step |
+|-----------|------------------|
+| Deterministic clicks or scrolls | **Cached Step** |
+| Dynamic workflows or variable layouts | **AI Step** |
+| Page validations or checks | **Assert Step** |
+| File uploads or email actions | **AI Step** |
+
+**Example Combined Flow:**
+- [Cached Step] Click “Sign In”
+- [AI Step] Login using "nishant@docketqa.com" and "password123"
+- [Assert Step] Assert that the dashboard loads successfully
+
+
+---
+
+### Summary
+
+AI steps let Docket act like an intelligent QA engineer—capable of reasoning about your app, understanding page state, and verifying outcomes based on real visual context.  
+By blending **AI steps** for logic, **cached steps** for precision, and **asserts** for validation, you can build robust, adaptive, and human-like test flows that evolve with your product.

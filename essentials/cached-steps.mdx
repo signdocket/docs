@@ -1,0 +1,102 @@
+---
+title: "Cached Steps"
+description: "Understanding and maintaining cached steps in Docket"
+icon: "bolt"
+---
+
+### What Are Cached Steps?
+
+Cached steps are clicks, hovers, and scrolls that Docket records while you interact with the remote browser in the test creation screen.\
+Each cached step stores both **the exact screen coordinates** of your action and a **natural language annotation** that describes what you did.
+
+You can identify cached steps by the **yellow cache icon** next to them.\
+To see the coordinate that Docket has captured, simply hover over the icon.
+
+![/images/remote_browser_cache_step.png](/images/remote_browser_cache_step.png)
+
+---
+
+### How Cached Steps Work
+
+Cached steps execute **sequentially**, one after another, without waiting for page loads or intermediate checks.\
+This means that **accuracy of both the coordinates and annotations** is critical to test stability.
+
+If the app’s layout changes and the cached coordinates are no longer valid, your test can become flaky or fail unexpectedly.\
+Always make sure your cached steps are up to date after major UI changes.
+
+---
+
+### Cached Steps During Real Test Runs
+
+When running a real test, Docket performs a **pre-check** before executing each cached step.\
+If the page hasn’t loaded yet or the click coordinate seems inconsistent with the annotation, Docket will trigger its **AI vision model** to attempt a **self-heal**.
+
+During self-healing, Docket uses:
+
+- The step’s **natural language annotation** (e.g. “login button”)
+- The current **visual state of the page**
+
+to find the correct element before proceeding.\
+This combination of **coordinate precision** and **semantic context** gives Docket reliability even as your UI evolves.
+
+---
+
+### Writing Good Annotations
+
+The annotations you see under cached steps (e.g. “click login button”, “scroll to footer”) are critical for Docket’s reasoning and self-healing.
+
+Here’s how to make them effective:
+
+#### Scroll Actions
+
+Describe not only _where_ to scroll, but also _what should be revealed_.
+
+✅ **Good Example:**
+
+> Scroll to the footer of the page and reveal the Careers and Terms of Service buttons.
+
+❌ **Bad Example:**
+
+> Scroll down.
+
+#### Click or Hover Actions
+
+Specify the exact element or purpose of the action.
+
+✅ **Good Example:**
+
+> Click on the blue “Sign In” button in the top-right corner.
+
+❌ **Bad Example:**
+
+> Click on button.
+
+---
+
+### Common Pitfalls
+
+| Issue                      | Description                                   | Example                                                  |
+| -------------------------- | --------------------------------------------- | -------------------------------------------------------- |
+| **Outdated Coordinates**   | UI layout changed, making coordinates invalid | Button moved after redesign                              |
+| **Vague Annotations**      | Unclear what element is being clicked         | “Click on link” when multiple exist                      |
+| **Missing Scroll Context** | Scrolls recorded but not described            | “Scroll down” instead of “Scroll to reveal footer links” |
+| **Redundant Steps**        | Repeated clicks on the same element           | Duplicate interactions                                   |
+
+---
+
+### Best Practices
+
+- Re-record cached steps after UI updates
+- Review annotations for clarity
+- Keep English instructions specific and descriptive
+- Minimize unnecessary actions
+- Combine cached steps with AI steps for resilient flows
+
+---
+
+### Summary
+
+Cached steps are the backbone of Docket’s deterministic testing.\
+They allow precise replay of user actions while staying flexible through Docket’s AI-assisted pre-check and self-healing.
+
+Keep your cached step annotations meaningful and accurate to ensure your tests remain stable, clear, and reliable.
