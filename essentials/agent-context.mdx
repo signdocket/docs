@@ -6,7 +6,11 @@ icon: "folder-grid"
 
 ### Agent Rules
 
-If there is certain context that is specific to your application, you can create an agent rule for it. These rules injected into Docket's system prompt when running your tests to help the agent navigate your applications. Examples of things to create an agent rule might be: 
+If there is certain context that is specific to your application, you can create an agent rule for it. These rules are injected into Docket's system prompt when running your tests to help the agent navigate your application. 
+
+Agent rules are particularly useful when writing [AI Steps](/essentials/ai-steps), as they provide the AI agent with application-specific knowledge to make better decisions.
+
+Examples of things to create an agent rule might be: 
 
 - The “Create Project” button is only visible after hovering over the sidebar and clicking the plus icon
 - The onboarding modal must be dismissed before any part of the dashboard becomes interactive

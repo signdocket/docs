@@ -6,11 +6,13 @@ icon: "bolt"
 
 ### What Are Cached Steps?
 
-Cached steps are clicks, hovers, and scrolls that Docket records while you interact with the remote browser in the test creation screen.\
+Cached steps are clicks, hovers, and scrolls that Docket records while you interact with the remote browser in the [test creation screen](/essentials/test-creation).\
 Each cached step stores both **the exact screen coordinates** of your action and a **natural language annotation** that describes what you did.
 
 You can identify cached steps by the **yellow cache icon** next to them.\
 To see the coordinate that Docket has captured, simply hover over the icon.
+
+> **Tip**: For dynamic workflows or complex logic, consider using [AI Steps](/essentials/ai-steps) instead, which adapt to UI changes automatically.
 
 ![/images/remote_browser_cache_step.png](/images/remote_browser_cache_step.png)
 
@@ -90,13 +92,19 @@ Specify the exact element or purpose of the action.
 - Review annotations for clarity
 - Keep English instructions specific and descriptive
 - Minimize unnecessary actions
-- Combine cached steps with AI steps for resilient flows
+- Combine cached steps with [AI steps](/essentials/ai-steps) for resilient flows
+
+> **Learn more**: See [AI Steps](/essentials/ai-steps) to understand how to use natural language instructions for dynamic test flows.
 
 ---
 
 ### Summary
 
-Cached steps are the backbone of Docket’s deterministic testing.\
-They allow precise replay of user actions while staying flexible through Docket’s AI-assisted pre-check and self-healing.
+Cached steps are the backbone of Docket's deterministic testing.\
+They allow precise replay of user actions while staying flexible through Docket's AI-assisted pre-check and self-healing.
 
 Keep your cached step annotations meaningful and accurate to ensure your tests remain stable, clear, and reliable.
+
+**Next Steps:**
+- Learn about [AI Steps](/essentials/ai-steps) for dynamic test flows
+- Read the full guide on [Creating a Test](/essentials/test-creation)

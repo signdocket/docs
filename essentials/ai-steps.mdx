@@ -6,14 +6,16 @@ icon: "sparkles"
 
 ### Overview
 
-AI steps are natural-language instructions that tell Docket’s intelligent agent what to **do** or **verify** in your application.  
-Unlike cached steps, which replay recorded coordinates, AI steps use Docket’s **vision and reasoning models** to dynamically interpret your instructions and act accordingly.
+AI steps are natural-language instructions that tell Docket's intelligent agent what to **do** or **verify** in your application.  
+Unlike [cached steps](/essentials/cached-steps), which replay recorded coordinates, AI steps use Docket's **vision and reasoning models** to dynamically interpret your instructions and act accordingly.
 
 There are two main types of AI steps in Docket:
 1. **AI Step** – perform an action  
 2. **Assert** – verify a condition  
 
 You can mix and match AI steps and cached steps to build powerful, adaptive, and self-healing tests.
+
+> **Getting Started**: New to Docket? Start with [Creating a Test](/essentials/test-creation) to learn the basics.
 
 ---
 
@@ -106,19 +108,21 @@ Follow these guidelines for clarity and precision:
 
 ### Combining Cached and AI Steps
 
-You can combine cached steps and AI steps to achieve a balance of precision and flexibility.
+You can combine [cached steps](/essentials/cached-steps) and AI steps to achieve a balance of precision and flexibility.
 
 | Use Case | Recommended Step |
 |-----------|------------------|
-| Deterministic clicks or scrolls | **Cached Step** |
+| Deterministic clicks or scrolls | **[Cached Step](/essentials/cached-steps)** |
 | Dynamic workflows or variable layouts | **AI Step** |
 | Page validations or checks | **Assert Step** |
 | File uploads or email actions | **AI Step** |
 
 **Example Combined Flow:**
-- [Cached Step] Click “Sign In”
+- [Cached Step] Click "Sign In"
 - [AI Step] Login using "nishant@docketqa.com" and "password123"
 - [Assert Step] Assert that the dashboard loads successfully
+
+> **Learn more**: See [Cached Steps](/essentials/cached-steps) to understand how coordinate-based actions work and when to use them.
 
 
 ---
