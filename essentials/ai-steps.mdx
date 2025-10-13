@@ -106,6 +106,38 @@ Follow these guidelines for clarity and precision:
 
 ---
 
+### Early Termination
+
+Docket can mark a test as failed without completing the entire flow if it detects usability issues that would frustrate a real user.
+
+The agent will fail the test early if it encounters:
+
+- The feature is not easily findable and requires navigating through multiple menus or sections  
+- The interface uses non-standard or unintuitive patterns  
+- The task takes significantly more steps or retries than expected  
+- There are visible errors, missing features, or unresponsive UI elements  
+- The interface is confusing due to unclear labeling, layout, or navigation  
+- The tester is unsure how to proceed because the next step isn't obvious or discoverable  
+
+Even without an explicit assertion, encountering any of the above will cause the test to fail—unless specified otherwise. You can craft your prompt accordingly if you'd like to override this behavior.
+
+> **Tip**: This behavior ensures Docket catches not just broken functionality, but also poor user experiences that could lead to user frustration or abandonment.
+
+---
+
+### Testing AI Steps in the Remote Browser
+
+When working with AI steps during test creation, you can test them in real-time using the remote browser. Simply write an AI step and click the **play button** next to it while the remote browser is running. Docket will execute that step immediately in the browser, allowing you to:
+
+- Verify the step works as expected
+- See the agent's reasoning in real-time
+- Iterate quickly on your test instructions
+- Observe how the agent interprets your natural language commands
+
+This live testing capability helps you refine your AI steps before running the full test, ensuring your instructions are clear and effective.
+
+---
+
 ### Combining Cached and AI Steps
 
 You can combine [cached steps](/essentials/cached-steps) and AI steps to achieve a balance of precision and flexibility.

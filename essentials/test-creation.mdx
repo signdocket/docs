@@ -4,27 +4,25 @@ description: "How to create a test on Docket"
 icon: "pen"
 ---
 
-### Test Suite
+### Prerequisites
 
 First, go to the [test suites](/essentials/test-suite) page to create a test suite that the test will belong to.
 
-### Test Metadata
+### Creating a Test
 
-Begin by providing a title, URL, and selecting a test suite for the test.
+To get started with writing a test on Docket, you should: 
+1. Navigate to the tests tab on the left
+2. Click "Create New Test"
+3. Enter a title, select a test suite, and provide an entrypoint URL (the starting point for your test)
+4. Click "Launch Browser"
 
 ![Screenshot 2025-07-17 at 4.03.12 PM.png](/images/Screenshot2025-07-17at4.03.12PM.png)
 
-The URL is the starting point for the test. The Docket Browser agent will automatically navigate to this URL and begin executing your instruction set.
+The URL you provide will be where the Docket Browser agent automatically navigates to begin executing your test.
 
-### Writing a Test in Docket
+### Building Your Test
 
-To get started with writing a test on Docket, you should: 
-1. Proceed to tests tab on the left
-2. Create a new test
-3. Enter a title and entrypoint URL, which will be the starting point for your test.
-4. Click "Launch Browser"
-
-To create tests on Docket you can simply interact in the remote browser and Docket will record actions, alongside with english annotations automatically. 
+To create tests on Docket, you can simply interact in the remote browser and Docket will record actions alongside English annotations automatically. 
 
 There are two types of steps you can write on Docket:
 1. **[Cached Steps](/essentials/cached-steps)** - Precise coordinate-based actions that replay exactly as recorded
@@ -75,45 +73,7 @@ To insert variables while writing test steps: just reference the variable using 
 
 Variables make your tests more maintainable and allow you to easily run the same test logic with different data across multiple environments or scenarios.
 
-### Assertions in Tests
-
-If you'd like Docket to perform an explicit check on the behavior of your application (e.g., ensuring that clicking "Clear Cart" actually clears the cart), you can instruct Docket to `assert` that behavior. This tells Docket to perform an "assertion" action—evaluating the result using all the test context and a screenshot of the page. If the assertion fails, Docket will mark the test as failed. If it passes, the test will continue.
-
-> **Learn more**: For detailed guidance on writing effective assertions, see the [AI Steps](/essentials/ai-steps#assert-step) documentation.
-
-When using the `assert` statement, be specific about the behavior you're verifying. If the instruction is ambiguous, the test might become flaky. Here are examples of common mistakes and how to fix them:
-
-| Problem                                | Bad Example                                                        | Improved Example                                                 |
-|----------------------------------------|--------------------------------------------------------------------|------------------------------------------------------------------|
-| Missing `assert` keyword               | Look for search results on the main body                           | Assert that there are search results displayed on the main body |
-| Ambiguous assertion                    | Assert that the order of the results is correct                    | Assert that the search results are sorted by date               |
-| Assertion about imperceptible details  | Assert that the color of the line divider is #ff5733               | Assert that the divider appears red                             |
-| Subjective assertion                   | Assert that the page looks well-designed                           | Assert that no text in the table overflows its cell             |
-| Assertion depends on time-based change | The video plays a 10-second ad for an insurance product            | N/A                                                              |
-
-> **Note**  
-> Other terms such as `verify`, `check`, `confirm`, `ensure`, or `validate` will also result in an assertion action. However, we recommend using `assert`, as Docket has been specially trained to respond to this term.
-
-### Early Termination
-
-Docket can mark a test as failed without completing the entire flow if it detects:
-
-- The feature is not easily findable and requires navigating through multiple menus or sections  
-- The interface uses non-standard or unintuitive patterns  
-- The task takes significantly more steps or retries than expected  
-- There are visible errors, missing features, or unresponsive UI elements  
-- The interface is confusing due to unclear labeling, layout, or navigation  
-- The tester is unsure how to proceed because the next step isn't obvious or discoverable  
-
-Even without an explicit assertion, encountering any of the above will cause the test to fail—unless specified otherwise. You can craft your prompt accordingly if you'd like to override this behavior.
-
-### Running a Simulation
-
-Simulations on the test creation page give you a live preview of a test run. They use the same infrastructure as a real test, so you can observe behavior ahead of time. To run a simulation, click the "Run" button in the instructions input header.
-
-![Screenshot 2025-07-17 at 5.06.46 PM.png](/images/Screenshot2025-07-17at5.06.46PM.png)
-
-You'll get a live feed of the test in the **Test Preview** window, along with the Docket agent's reasoning shown in the **Actions** tab.
+> **Learn more**: For detailed guidance on writing assertions and understanding AI steps, see the [AI Steps](/essentials/ai-steps) documentation.
 
 ### Advanced Test Configuration
 
