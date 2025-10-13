@@ -27,8 +27,10 @@ To get started with writing a test on Docket, you should:
 To create tests on Docket you can simply interact in the remote browser and Docket will record actions, alongside with english annotations automatically. 
 
 There are two types of steps you can write on Docket:
-1. Cached Steps
-2. AI step
+1. **[Cached Steps](/essentials/cached-steps)** - Precise coordinate-based actions that replay exactly as recorded
+2. **[AI Steps](/essentials/ai-steps)** - Natural language instructions that adapt to your UI dynamically
+
+Learn more about each step type to understand when to use them.
 
 ### Test Variables
 
@@ -76,6 +78,8 @@ Variables make your tests more maintainable and allow you to easily run the same
 ### Assertions in Tests
 
 If you'd like Docket to perform an explicit check on the behavior of your application (e.g., ensuring that clicking "Clear Cart" actually clears the cart), you can instruct Docket to `assert` that behavior. This tells Docket to perform an "assertion" action—evaluating the result using all the test context and a screenshot of the page. If the assertion fails, Docket will mark the test as failed. If it passes, the test will continue.
+
+> **Learn more**: For detailed guidance on writing effective assertions, see the [AI Steps](/essentials/ai-steps#assert-step) documentation.
 
 When using the `assert` statement, be specific about the behavior you're verifying. If the instruction is ambiguous, the test might become flaky. Here are examples of common mistakes and how to fix them:
 

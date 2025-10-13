@@ -22,6 +22,8 @@
         "pages": [
           "essentials/test-suite",
           "essentials/test-creation",
+          "essentials/ai-steps",
+          "essentials/cached-steps",
           "essentials/running-test",
           "essentials/ci-integration",
           "essentials/agent-context",
