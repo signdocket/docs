@@ -16,20 +16,19 @@ Begin by providing a title, URL, and selecting a test suite for the test.
 
 The URL is the starting point for the test. The Docket Browser agent will automatically navigate to this URL and begin executing your instruction set.
 
-### Writing a Good Test
+### Writing a Test in Docket
 
-You write tests in Docket as a single prompt. Think of it as describing what you want tested to a human who is savvy with web applications but has never interacted with yours before.
+To get started with writing a test on Docket, you should: 
+1. Proceed to tests tab on the left
+2. Create a new test
+3. Enter a title and entrypoint URL, which will be the starting point for your test.
+4. Click "Launch Browser"
 
-Each test should cover a single objective. Examples of test objectives include:
+To create tests on Docket you can simply interact in the remote browser and Docket will record actions, alongside with english annotations automatically. 
 
-- Adding an item to a shopping cart  
-- Completing the onboarding form for an application  
-- Testing the filtering functionality on a table  
-- Searching a query and verifying that the top result is relevant  
-
-To write a test, simply enter your prompt into the "Instructions" section on the test creation page.
-
-![Screenshot 2025-07-17 at 4.18.22 PM.png](/images/Screenshot2025-07-17at4.18.22PM.png)
+There are two types of steps you can write on Docket:
+1. Cached Steps
+2. AI step
 
 ### Test Variables
 
@@ -70,10 +69,7 @@ In this example, `@registration_email` would be replaced with the unique email a
 
 #### Using Variables in Instructions
 
-To insert variables while writing test instructions:
-1. Press the `@` key in the instructions text area
-2. Select from your existing variables or create a new one
-3. The variable will appear as `@variable_name` in your instructions
+To insert variables while writing test steps: just reference the variable using "@variable_name" and Docket will auto-populate it during runtime.
 
 Variables make your tests more maintainable and allow you to easily run the same test logic with different data across multiple environments or scenarios.
 
