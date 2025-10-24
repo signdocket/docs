@@ -157,7 +157,13 @@ jobs:
           # Ensure the docket_run_completed event payload contains this SHA as 'commitSha'.
           testParameters: |
             {
-              "test_blueprint_category_id": "3"
+              "test_blueprint_category_id": "3",
+              "test_blueprint_category_url_overrides": {
+                "3": "https://bing.com"
+              },
+              "test_blueprint_url_overrides": {
+                "15": "https://staging.docketqa.com"
+              }
             }
 
       - name: QA Process Initiated
@@ -364,3 +370,24 @@ Lastly, take a look at your deploy action, and optionally, add Docket QA runs as
             Please review the QA results and **comment with `/approve` or `/reject` on the issue created by this step.**
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 ```
+
+### URL Overrides
+
+Override starting URLs for tests during CI/CD runs to test against different environments.
+
+**Test Suite Level**: Use `test_blueprint_category_url_overrides` with test suite IDs  
+**Individual Test Level**: Use `test_blueprint_url_overrides` with test IDs
+
+```json
+{
+  "test_blueprint_category_id": "3",
+  "test_blueprint_category_url_overrides": {
+    "17": "https://staging.myapp.com"
+  },
+  "test_blueprint_url_overrides": {
+    "167": "https://staging.docketqa.com"
+  }
+}
+```
+
+Individual test overrides take precedence over test suite overrides. Both are optional.
