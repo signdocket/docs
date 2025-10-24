@@ -67,6 +67,15 @@ After registering, get the confirmation code from the email and use it to confir
 
 In this example, `@registration_email` would be replaced with the unique email address generated for that test run, and the agent would monitor only that specific mailbox for incoming emails.
 
+#### Random Alphanumeric Variables
+
+Random alphanumeric variables generate unique random strings (letters and numbers) for each test run. You can set the length and toggle between uppercase/lowercase letters. Perfect for unique usernames, product IDs, or any data that needs to be different every time.
+
+**Example usage:**
+```
+Register a new account with username @random_username and create a product named @random_product_id.
+```
+
 #### Using Variables in Instructions
 
 To insert variables while writing test steps: just reference the variable using "@variable_name" and Docket will auto-populate it during runtime.
