@@ -1,0 +1,60 @@
+---
+title: "Anti-Bot Detection"
+description: "Solutions for bot detection systems including Clerk and IP allowlisting"
+icon: "shield"
+---
+
+## Docket IP Allowlist
+
+To prevent our automated requests from being blocked, please allow-list the following IP addresses in your security systems:
+
+```
+66.241.125.240/32
+213.188.221.104/32
+```
+
+These IPs should be allowlisted in:
+- Firewalls
+- Bot detection systems
+- Rate limiting rules
+- WAF configurations
+
+## Clerk Bot Detection
+
+If you see a Clerk bot detection page in one of your test failures, you have likely enabled Clerk Bot Detection turned on.
+
+Docket's AI is running in a headless browser, which is often detected as a bot by Clerk. There are two ways to resolve this:
+
+### 1. Disable Clerk Bot Detection on staging
+
+Clerk does not have a granular way to allowlist User-Agent. The best way to resolve this is to disable Clerk Bot Detection on staging.
+
+### 2. Create a simple API to return a session token to Stably
+
+Clerk enables services to bypass bot detection by attaching a session token to the request. You can read more about it [here](https://clerk.com/docs/guides/development/testing/overview#testing-tokens).
+
+If you want to test on production or keep Clerk bot detection on for staging, you can implement an API that returns a session token.
+
+The API is necessary because session tokens are short-lived and require your Clerk tokens to generate, therefore only you can generate it.
+
+Here is an example of how you can implement this API:
+
+```javascript
+import { clerkClient } from "@clerk/clerk-express";
+
+const clerk = clerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY,
+}); 
+
+app.post("/session", async (req, res) => {
+  const { clerkToken } = req.body;
+  const session = await clerk.sessions.create({
+    userId: clerkToken,
+  });
+  res.json(session);
+});
+```
+
+Once you have the API, you can add it in advanced settings.
+
+![Clerk Bot Detection Configuration](/images/clerk-bot-detection.png)
