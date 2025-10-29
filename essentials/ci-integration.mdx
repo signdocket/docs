@@ -158,10 +158,10 @@ jobs:
           testParameters: |
             {
               "test_blueprint_category_id": "3",
-              "test_blueprint_category_url_overrides": {
+              "test_suite_url_overrides": {
                 "3": "https://bing.com"
               },
-              "test_blueprint_url_overrides": {
+              "test_url_overrides": {
                 "15": "https://staging.docketqa.com"
               }
             }
@@ -373,23 +373,39 @@ Lastly, take a look at your deploy action, and optionally, add Docket QA runs as
 
 ### URL Overrides
 
-Override starting URLs for tests during CI/CD runs to test against different environments.
+Override starting URLs for tests during CI/CD runs to test against different environments. This is particularly useful when generating preview links (like Vercel preview deployments) and you want to test against those specific environments instead of your production URLs.
 
-**Test Suite Level**: Use `test_blueprint_category_url_overrides` with test suite IDs  
-**Individual Test Level**: Use `test_blueprint_url_overrides` with test IDs
+**Important**: URLs are expected to be URL-encoded and will be automatically decoded during test execution.
+
+#### Override Types
+
+- **Test Suite URL Overrides** (`test_suite_url_overrides`): **All tests in the suite** start from this URL
+- **Test Suite Login URL Overrides** (`test_suite_account_login_url_overrides`): **Account belonging to this test suite** will use this login URL  
+- **Individual Test URL Overrides** (`test_url_overrides`): Override specific tests (takes precedence)
+
+#### Vercel Preview Example
+
+When deploying with Vercel, you might want to test your preview deployment before merging. Here's how to override entrypoints for tests, test suites, and account login flows:
 
 ```json
 {
-  "test_blueprint_category_id": ["17"],
-  "test_blueprint_category_url_overrides": {
-    "17": "https://bing.com"
+  "test_blueprint_category_id": ["17", "23"],
+  "test_suite_url_overrides": {
+    "17": "https://myapp-git-feature-branch-team.vercel.app",
+    "23": "https://myapp-git-feature-branch-team.vercel.app/dashboard"
   },
-  "test_blueprint_url_overrides": {
-    "167": "https://staging.docketqa.com"
+  "test_suite_account_login_url_overrides": {
+    "17": "https://myapp-git-feature-branch-team.vercel.app/auth/login",
+    "23": "https://myapp-git-feature-branch-team.vercel.app/admin/login"
+  },
+  "test_url_overrides": {
+    "167": "https://myapp-git-feature-branch-team.vercel.app/specific-feature",
+    "234": "https://myapp-git-feature-branch-team.vercel.app/new-component"
   }
 }
 ```
 
-In this example: all tests in test suite `17` will start at `https://bing.com`, except test `167` which will start at `https://staging.docketqa.com` instead.
-
-Individual test overrides take precedence over test suite overrides. Both are optional.
+In this example:
+- **Test suite `17`**: All tests start from preview root, login at `/auth/login`
+- **Test suite `23`**: All tests start from preview `/dashboard`, admin login at `/admin/login`  
+- **Tests `167` and `234`**: Override suite settings with specific feature URLs
