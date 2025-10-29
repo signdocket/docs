@@ -93,6 +93,11 @@ function verifyWebhookSignature(secretHex, signatureHeader, rawBody) {
     "tests_passed": 15,
     "tests_failed": 0,
     "tests_stopped": 0,
+    "github_context": {
+      "ref": "this/is/a/ref",
+      "commit_sha": "abcdef",
+      "repository": "dummy_repo"
+    },
     "tests": [
       {
         "id": 67890,
@@ -114,6 +119,10 @@ function verifyWebhookSignature(secretHex, signatureHeader, rawBody) {
 - `payload.status`: Test group status (`passed`, `failed`, `stopped`)
 - `payload.tests`: Array of individual test results
 - `payload.tests_*`: Count of tests by status
+- `payload.github_context`: GitHub context information (only present during CI/CD runs)
+  - `ref`: Git reference (branch/tag)
+  - `commit_sha`: Commit SHA hash
+  - `repository`: Repository name
 
 ## Requirements
 
