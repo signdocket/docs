@@ -24,11 +24,22 @@ The URL you provide will be where the Docket Browser agent automatically navigat
 
 To create tests on Docket, you can simply interact in the remote browser and Docket will record actions alongside English annotations automatically. 
 
-There are two types of steps you can write on Docket:
+There are three types of steps you can write on Docket:
 1. **[Cached Steps](/essentials/cached-steps)** - Precise coordinate-based actions that replay exactly as recorded
 2. **[AI Steps](/essentials/ai-steps)** - Natural language instructions that adapt to your UI dynamically
+3. **API Steps** - Network requests to endpoints for seeding, setup, and teardown of test resources
 
 Learn more about each step type to understand when to use them.
+
+#### API Steps
+
+API steps allow you to make network requests to any endpoint during your test execution. These steps are particularly useful for:
+
+- **Test Setup**: Creating test data, user accounts, or resources before the main test flow
+- **Test Seeding**: Populating databases or systems with necessary data
+- **Test Teardown**: Cleaning up resources after test completion
+
+API steps support all HTTP methods (GET, POST, PUT, DELETE, PATCH, etc.) and pass when they receive a 2xx response status code. This makes them ideal for integrating with your application's backend APIs to prepare the testing environment or verify system state.
 
 ### Test Variables
 
