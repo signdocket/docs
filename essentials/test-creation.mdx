@@ -20,98 +20,146 @@ To get started with writing a test on Docket, you should:
 
 The URL you provide will be where the Docket Browser agent automatically navigates to begin executing your test.
 
+> **Learn more**: For detailed information about the persistent browser instance and its controls, see the [Remote Browser](/essentials/remote-browser) documentation.
+
 ### Building Your Test
 
-To create tests on Docket, you can simply interact in the remote browser and Docket will record actions alongside English annotations automatically. 
+To create tests on Docket, you can simply interact in the [remote browser](/essentials/remote-browser) and Docket will record actions alongside English annotations automatically. 
 
-There are three types of steps you can write on Docket:
-1. **[Cached Steps](/essentials/cached-steps)** - Precise coordinate-based actions that replay exactly as recorded
+There are four types of steps you can write on Docket:
+1. **[Cached Steps](/essentials/cached-steps)** - Precise coordinate-based actions that replay exactly as recorded and self-heal when the UI changes
 2. **[AI Steps](/essentials/ai-steps)** - Natural language instructions that adapt to your UI dynamically
 3. **API Steps** - Network requests to endpoints for seeding, setup, and teardown of test resources
+4. **Modules** - Reusable collections of steps that can be shared across multiple tests
 
 Learn more about each step type to understand when to use them.
 
-#### API Steps
+### API Steps
 
-API steps allow you to make network requests to any endpoint during your test execution. These steps are particularly useful for:
+API steps allow you to make network requests to any endpoint during your test execution. They're incredibly powerful for creating dynamic, data-driven tests that can fully manage test resources throughout their lifecycle.
 
+**Common use cases:**
 - **Test Setup**: Creating test data, user accounts, or resources before the main test flow
 - **Test Seeding**: Populating databases or systems with necessary data
+- **Dynamic CRUD Operations**: Create resources, store their IDs, then update or delete them later in the test
 - **Test Teardown**: Cleaning up resources after test completion
 
-API steps support all HTTP methods (GET, POST, PUT, DELETE, PATCH, etc.) and pass when they receive a 2xx response status code. This makes them ideal for integrating with your application's backend APIs to prepare the testing environment or verify system state.
+API steps support all HTTP methods (GET, POST, PUT, DELETE, PATCH, etc.) and pass when they receive a 2xx response status code.
 
-### Test Variables
+##### Extracting Response Data
 
-Docket supports two types of variables that can be used to make your tests more dynamic and reusable. Variables can be created in the Variables tab of the test and inserted into your test instructions by pressing the `@` key while writing.
+API steps can extract data from responses and store them in variables using **JSON Path** expressions. This enables powerful workflows where you create resources and use their IDs in subsequent steps.
+
+![API Step Configuration](/images/Screenshot_2025-11-20_at_1.31.48_PM.png)
+
+In the example above, we're extracting a `resource_id` from a nested API response. Notice how the request also uses `@bearer_token` in the Authorization header—this token was likely extracted from a previous authentication API call, demonstrating how you can chain multiple API steps together.
+
+**Response structure:**
+```json
+{
+  "response": {
+    "data": [
+      {"resource_id": 123, "other_data": "..."},
+      {"resource_id": 456, "other_data": "..."}
+    ]
+  }
+}
+```
+
+**JSON Path:** `response.data[0].resource_id`  
+**Result:** Extracts `123` and stores it in the `@resource_id` variable
+
+##### Dynamic CRUD Example
+
+API steps become extremely powerful when you combine variable extraction with multiple requests:
+
+1. **Create** a product via POST and extract its ID to `@product_id`
+2. **Update** the product via PUT to `https://api.example.com/products/@product_id`
+3. Use the product in your UI test flow
+4. **Delete** the product via DELETE to `https://api.example.com/products/@product_id` for cleanup
+
+This pattern allows you to create fully isolated, repeatable tests that manage their own test data dynamically without polluting your database or depending on pre-existing resources.
+
+### Modules
+
+Modules are reusable collections of steps that can be created once and inserted into multiple tests. They're perfect for common workflows like logging in, navigating to a specific page, or performing setup tasks that are repeated across many tests.
+
+**Key features:**
+- **Create and manage** modules in the "Modules" section of Docket
+- **Compose with any step type**: Modules can contain AI steps, cached steps, and API steps
+- **Cannot nest**: Modules cannot reference other modules
+- **CRUD interface**: The module creation interface is similar to test creation, with a [remote browser](/essentials/remote-browser) for recording interactions
+
+##### Variables in Modules
+
+Modules have specific rules around variable usage:
+
+- **Can reference variables**: Modules can use variables (like `@user_email` or `@auth_token`) that are defined in the tests where the module is used
+- **Can extract from API calls**: Modules can create new variables by extracting values from API response bodies within the module
+- **Cannot define variables**: Modules cannot create their own text, email, or random alphanumeric variables
+- **No file uploads**: Modules do not support file management
+
+This design keeps modules focused and portable—they rely on the parent test for variable definitions and file resources while still being able to extract and pass data through API calls.
+
+**Common use cases:**
+- Standard navigation sequences
+- Common setup or teardown operations
+- Shared API authentication workflows
+- Repeated multi-step interactions
+
+### Lifecycle Hooks
+
+Lifecycle hooks allow you to attach optional [modules](#modules) that run automatically at specific points in your test execution. Configure these in the "Lifecycle Hooks" tab of your test.
+
+**Setup Hook**  
+Runs after any account login (if configured) and before the first test instruction. Perfect for creating test resources via [API steps](#api-steps) and storing their IDs in variables.
+
+**Teardown Hook**  
+Runs after the test completes, regardless of whether it passed or failed. Ideal for cleaning up resources created during the test.
+
+The most powerful use of lifecycle hooks is pairing setup and teardown modules with [API steps](#api-steps):
+
+1. **Setup module**: Create resources via API POST requests, extract their IDs to variables (e.g., `@test_user_id`, `@order_id`)
+2. **Test**: Use these resources in your UI test flow by referencing the variables
+3. **Teardown module**: Delete the resources via API DELETE requests using the stored IDs
+
+This pattern ensures each test run starts with a clean environment and doesn't leave behind test data, making your tests fully isolated and repeatable.
+
+## Test Variables
+
+Variables can be created in the Variables tab and inserted into test instructions by pressing `@` while writing.
 
 ![Screenshot 2025-07-17 at 4.18.22 PM.png](/images/Screenshot_2025-08-27_at_8.23.59_AM.png)
 
-#### Text Variables
+### <Icon icon="brackets-curly" /> Text Variables
+Static values that remain constant throughout test execution. Ideal for credentials, product names, or configuration values.
 
-Text variables are simple placeholders that get replaced with their configured values when your test runs. They're ideal for making tests flexible and reusable across different environments or scenarios.
+### <Icon icon="arrows-rotate" /> Dynamic Variables
+Generate pseudorandom strings with configurable length and character sets. Perfect for unique usernames, product IDs, or any data requiring uniqueness.
 
-**Common use cases:**
-- **Credentials**: Usernames and passwords when not using the accounts feature
-- **Test data**: Product names, user IDs, or any values that you might want to change often
+### <Icon icon="envelope" /> Email Variables
+Generate a unique mailbox per test run (e.g., `baseaddress+unique123@domain.com`). The agent can monitor this specific address for incoming emails during test execution.
 
-**Example usage:**
-```
-Log in with username @test_username and password @test_password.
-Search for @product_name and add it to the cart.
-```
+### <Icon icon="globe" /> Extracted Variables
+Created dynamically by capturing data from API responses using JSON Path (from response body) or directly from response headers. Use these to store auth tokens, resource IDs, or session identifiers. See [API Steps](#api-steps) for examples.
 
-#### Email Variables
-
-Email variables are more sophisticated and generate a unique mailbox for each test run using plus addressing. This creates a dedicated email address that the agent can monitor during that specific test execution.
-
-Key features of email variables:
-- **Unique per run**: Each test execution gets its own email address (e.g., `baseaddress+unique123@domain.com`)
-- **Agent accessibility**: The agent can only check emails sent to this specific unique address during the test run
-- **Full address reference**: You can reference the complete generated email address in your instructions when you need to input it into forms
-
-**Example usage:**
-```
-Register a new account using @registration_email as the email address. 
-After registering, get the confirmation code from the email and use it to confirm your account
-```
-
-In this example, `@registration_email` would be replaced with the unique email address generated for that test run, and the agent would monitor only that specific mailbox for incoming emails.
-
-#### Random Alphanumeric Variables
-
-Random alphanumeric variables generate unique random strings (letters and numbers) for each test run. You can set the length and toggle between uppercase/lowercase letters. Perfect for unique usernames, product IDs, or any data that needs to be different every time.
-
-**Example usage:**
-```
-Register a new account with username @random_username and create a product named @random_product_id.
-```
-
-#### Using Variables in Instructions
-
-To insert variables while writing test steps: just reference the variable using "@variable_name" and Docket will auto-populate it during runtime.
-
-Variables make your tests more maintainable and allow you to easily run the same test logic with different data across multiple environments or scenarios.
-
-> **Learn more**: For detailed guidance on writing assertions and understanding AI steps, see the [AI Steps](/essentials/ai-steps) documentation.
-
-### Advanced Test Configuration
+## Advanced Test Configuration
 
 Configure additional settings to fine-tune your test execution behavior.
 
 <img src="/images/Screenshot_2025-08-27_at_8.38.26_AM.png" alt="Advanced Test Configuration" width="400" />
 
-#### Browser Zoom Level
+### Browser Zoom Level
 Control the browser's zoom level (equivalent to `Ctrl +/-` in Chromium). Useful for testing responsive design and accessibility.
 **Options:** 50%, 75%, 100% (default), 125%, 150%, 200%
 
-#### Test Retries
+### Test Retries
 Configure automatic retries when a test fails. Docket will re-run the entire test from the beginning.
 **Options:** No retries (default), 1-3 retries
 
-#### Test Status
+### Test Status
 - **Active** (default): Test runs in all scenarios
 - **Paused**: Test is excluded from scheduled runs, CI/CD, and group executions
 
-#### Two-Factor Authentication (2FA)
+### Two-Factor Authentication (2FA)
 Store TOTP secrets for automated 2FA during testing. Enter the secret key from your authenticator app setup, and Docket will automatically generate codes when prompted.
