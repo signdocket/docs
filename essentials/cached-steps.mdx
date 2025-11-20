@@ -6,8 +6,7 @@ icon: "bolt"
 
 ### What Are Cached Steps?
 
-Cached steps are clicks, hovers, and scrolls that Docket records while you interact with the remote browser in the [test creation screen](/essentials/test-creation).\
-Each cached step stores both **the exact screen coordinates** of your action and a **natural language annotation** that describes what you did.
+Cached steps are clicks, hovers, and scrolls that Docket records while you interact with the [remote browser](/essentials/remote-browser) during test creation. Each cached step stores both **the exact screen coordinates** of your action and a **natural language annotation** that describes what you did.
 
 You can identify cached steps by the **yellow cache icon** next to them.\
 To see the coordinate that Docket has captured, simply hover over the icon.
@@ -20,7 +19,7 @@ To see the coordinate that Docket has captured, simply hover over the icon.
 
 ### How Cached Steps Work
 
-Cached steps execute **sequentially**, one after another. In recording (or remote browser) mode, they do not waiting for page loads or self heal. Cached steps will auto wait for page loads or try to self heal during full test runs (see below). 
+Cached steps execute **sequentially**, one after another. In [recording mode](/essentials/remote-browser#start-recording), they do not waiting for page loads or self heal. Cached steps will auto wait for page loads or try to self heal during full test runs (see below). 
 
 If a minor change is made to your UI, Docket will be able to self heal as long as the annotation of the cached action is correct. 
 However, after major UI changes, it is recommended you ensure your cached steps are up to date.
