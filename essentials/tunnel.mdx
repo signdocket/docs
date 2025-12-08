@@ -1,0 +1,53 @@
+---
+title: "Docket Tunnel"
+description: "Test your local development environment with Docket"
+icon: "tunnel"
+---
+
+### Overview
+
+The Docket tunnel lets you run tests against your local development environment without exposing it to the public internet. Only your authenticated Docket account can access the proxied services.
+
+### Install the CLI
+
+Download and install the Docket CLI from our official distribution:
+
+```bash
+curl -fsSL https://api.docketqa.com/tunnel/install | bash
+```
+
+Add the CLI to your PATH:
+
+```bash
+export PATH="$HOME/.docket/bin:$PATH"
+```
+
+> **Tip**: Add the export line to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.) to make it permanent.
+
+### Authenticate
+
+Link the CLI to your Docket account. This account will be the only one with access to services exposed over the tunnel:
+
+```bash
+docket auth
+```
+
+### Start the Tunnel
+
+Provide all local service URLs needed for running tests (frontend, backend, etc.). Only HTTP(S) traffic to these URLs is proxied:
+
+```bash
+docket start http://localhost:3000 http://localhost:5000
+```
+
+While the tunnel is running:
+- Your local services are accessible from within your authenticated Docket account
+- Resources are **not** accessible from the public internet or any other Docket account
+- Press `Ctrl+C` to stop the tunnel
+
+### Running Tests Against Local Builds
+
+To run a test against your local build, update the test's entrypoint URL to the local URL you normally use (e.g., `http://localhost:3000`). Alternatively, you can use the generated `docket-tunnel.com` URL.
+
+The Docket browser agent will route traffic through the tunnel to reach your local services.
+
