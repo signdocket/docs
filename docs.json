@@ -32,7 +32,8 @@
           "essentials/bot-detection",
           "essentials/webhooks",
           "essentials/dedicated-mailboxes",
-          "essentials/file-upload"
+          "essentials/file-upload",
+          "essentials/tunnel"
         ]
       }
     ]
