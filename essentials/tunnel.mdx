@@ -34,10 +34,10 @@ docket auth
 
 ### Start the Tunnel
 
-Start the tunnel to automatically proxy traffic to your local services:
+Provide all local service URLs needed for running tests (frontend, backend, etc.). Only HTTP(S) traffic to these URLs is proxied:
 
 ```bash
-docket start
+docket start http://localhost:3000 http://localhost:5000
 ```
 
 While the tunnel is running:
