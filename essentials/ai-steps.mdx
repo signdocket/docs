@@ -74,7 +74,7 @@ Docket’s agent will handle the entire sequence intelligently, linking file upl
 ### Assert Step
 
 An **Assert** step tells Docket to verify that a condition holds true at the current state of your application.  
-When you write an assertion, Docket takes a **screenshot**, analyzes the page using its **vision model**, and uses prior test history to understand context.
+When you write an assertion, Docket takes a **screenshot**, analyzes the page using its **vision model**, and uses prior test history to understand context. The 5 most recent actions include their screenshots, while older actions are passed as text-only context.
 
 **Examples:**
 - Assert that the dashboard shows at least 3 recent orders.
