@@ -39,8 +39,8 @@
     ]
   },
   "logo": {
-    "light": "/logo/light-logo.png",
-    "dark": "/logo/dark-logo.png"
+    "light": "/logo/docket-christmas-logo-light.png",
+    "dark": "/logo/docket-christmas-logo-dark.png"
   },
   "navbar": {
     "links": [
