@@ -6,14 +6,17 @@ icon: "shield"
 
 ## Docket IP Allowlist
 
-To prevent our automated requests from being blocked, please allow-list the following IP addresses in your security systems:
+To prevent our automated requests from being blocked, please allow-list the following IP addresses in your security systems. 
 
-```
-209.71.96.165
-2a09:8280:1::91:90e3:0
-```
+If you have **Proxy** turned on in your Browser Settings, Docket will use a residential proxy from the region you've selected. In this case, you should allow-list the following IP addresses depending on the region:
 
-Note: If your environment enforces IPv6 allowlisting, please allow both addresses. Otherwise IPV4 address is sufficient.
+| Region | IP Address |
+| :--- | :--- |
+| **US West** | `209.71.96.165` |
+| **US East** | `204.93.227.70` |
+| **Europe (UK)** | `205.234.240.78` |
+| **Asia (India)** | `204.93.145.73` |
+
 
 These IPs should be allowlisted in:
 - Firewalls
