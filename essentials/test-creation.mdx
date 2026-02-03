@@ -26,11 +26,12 @@ The URL you provide will be where the Docket Browser agent automatically navigat
 
 To create tests on Docket, you can simply interact in the [remote browser](/essentials/remote-browser) and Docket will record actions alongside English annotations automatically. 
 
-There are four types of steps you can write on Docket:
+There are five types of steps you can write on Docket:
 1. **[Cached Steps](/essentials/cached-steps)** - Precise coordinate-based actions that replay exactly as recorded and self-heal when the UI changes
 2. **[AI Steps](/essentials/ai-steps)** - Natural language instructions that adapt to your UI dynamically
 3. **API Steps** - Network requests to endpoints for seeding, setup, and teardown of test resources
 4. **Modules** - Reusable collections of steps that can be shared across multiple tests
+5. **Trigger Run** - Trigger another Docket test and pass variables between them
 
 Learn more about each step type to understand when to use them.
 
@@ -107,6 +108,17 @@ This design keeps modules focused and portable—they rely on the parent test fo
 - Shared API authentication workflows
 - Repeated multi-step interactions
 
+### Trigger Run
+
+Trigger Run steps execute another Docket test from within your current test. Useful for dependent tests—e.g., a "Create Account" test that triggers a "Login" test, passing the credentials via variable mapping.
+
+**Key features:**
+- **Trigger any test**: Select another test in your workspace to run as a step
+- **Variable mapping**: Pass variables from the current test to the triggered test, allowing data to flow between tests
+- **Run skipped tests**: Trigger Run is the programmatic way to execute tests with [Suite Run Behavior](#suite-run-behavior) set to "Skipped"
+
+![Trigger Run Configuration](/images/Screenshot_2026-02-03_at_7.43_30_AM.png)
+
 ### Lifecycle Hooks
 
 Lifecycle hooks allow you to attach optional [modules](#modules) that run automatically at specific points in your test execution. Configure these in the "Lifecycle Hooks" tab of your test.
@@ -157,9 +169,12 @@ Control the browser's zoom level (equivalent to `Ctrl +/-` in Chromium). Useful 
 Configure automatic retries when a test fails. Docket will re-run the entire test from the beginning.
 **Options:** No retries (default), 1-3 retries
 
-### Test Status
-- **Active** (default): Test runs in all scenarios
-- **Paused**: Test is excluded from scheduled runs, CI/CD, and group executions
+### Suite Run Behavior
+- **Included** (default): Test runs in all scenarios
+- **Skipped**: When a test suite is triggered to which this test belongs, this test is skipped and not run. The only way to run this test is via a [Trigger Run](#trigger-run) step or manually through the UI
+
+### Typing Speed
+Set the delay between keystrokes in milliseconds. Range: 12ms–1000ms (default: 12ms).
 
 ### Two-Factor Authentication (2FA)
 Store TOTP secrets for automated 2FA during testing. Enter the secret key from your authenticator app setup, and Docket will automatically generate codes when prompted.
