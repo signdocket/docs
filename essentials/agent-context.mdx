@@ -6,18 +6,38 @@ icon: "folder-grid"
 
 ### Agent Rules
 
-If there is certain context that is specific to your application, you can create an agent rule for it. These rules are injected into Docket's system prompt when running your tests to help the agent navigate your application. 
+Agent rules are instructions injected into Docket's system prompt when running your tests. They help the agent navigate application-specific behavior that isn't obvious from the UI alone.
 
 Agent rules are particularly useful when writing [AI Steps](/essentials/ai-steps), as they provide the AI agent with application-specific knowledge to make better decisions.
 
-Examples of things to create an agent rule might be: 
+**Examples:**
 
-- The “Create Project” button is only visible after hovering over the sidebar and clicking the plus icon
+- The "Create Project" button is only visible after hovering over the sidebar and clicking the plus icon
 - The onboarding modal must be dismissed before any part of the dashboard becomes interactive
-- To invite a teammate, go to “Workspace Settings” via the top-right dropdown, then open the “Members” tab
-- “Add to Cart” is labeled as “Reserve Now” on product detail pages for rental items
-- The “Submit for Approval” button only appears after all form fields are valid and the form auto-saves
+- To invite a teammate, go to "Workspace Settings" via the top-right dropdown, then open the "Members" tab
+- "Add to Cart" is labeled as "Reserve Now" on product detail pages for rental items
+- The "Submit for Approval" button only appears after all form fields are valid and the form auto-saves
 
-You can configure these agent rules from the agent rule tab on the Docket dashboard. 
+Each rule can be up to 1,024 characters, with a maximum of 10 rules per level.
 
-![Screenshot 2025-07-17 at 6.25.22 PM.png](/images/Screenshot2025-07-17at6.25.22PM.png)
+---
+
+### Company-Level Rules
+
+Company-level rules apply to **all tests** across your organization. Configure them from the Agent Rules tab on the Docket dashboard.
+
+![Screenshot 2025-07-17 at 6.25.22 PM.png](/images/Screenshot2025-07-17at6.25.22PM.png)
+
+---
+
+### Suite-Level Rules
+
+You can also define agent rules at the **test suite** level. Suite-level rules are additive — they are combined with your company-level rules when running tests in that suite.
+
+This is useful when different parts of your application have different navigation patterns, terminology, or behavior. For example, your admin dashboard might have different conventions than your public-facing app.
+
+To add suite-level rules, open the create or edit modal for a test suite and scroll to the **Agent Rules** section.
+
+![Screenshot 2026-03-11 at 3.59.12 PM](/images/Screenshot2026-03-11at3.59.12PM.png)
+
+> **Note**: Suite-level rules supplement company rules — they don't replace them. The agent sees both sets of rules during test execution.

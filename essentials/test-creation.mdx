@@ -173,6 +173,17 @@ Configure automatic retries when a test fails. Docket will re-run the entire tes
 - **Included** (default): Test runs in all scenarios
 - **Skipped**: When a test suite is triggered to which this test belongs, this test is skipped and not run. The only way to run this test is via a [Trigger Run](#trigger-run) step or manually through the UI
 
+### Persist Self-Healed Actions
+When enabled, if the AI agent self-heals a cached step during test execution (e.g., because a button moved), the updated action automatically replaces the original in your test definition. This keeps your tests up to date as your UI evolves without manual re-recording.
+**Options:** Disabled (default), Enabled
+
+### File Download Behavior
+Controls how the agent handles files downloaded during a test (e.g., CSV exports, PDF reports).
+- **Save Only** (default): The file is saved but its contents are not read
+- **Ingest Content**: The file is saved **and** its contents are extracted and injected into the agent's context, allowing subsequent assert steps to verify file contents
+
+This is particularly useful for testing export functionality — for example, asserting that a downloaded CSV contains the expected data.
+
 ### Typing Speed
 Set the delay between keystrokes in milliseconds. Range: 12ms–1000ms (default: 12ms).
 

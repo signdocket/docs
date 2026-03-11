@@ -18,22 +18,46 @@
         ]
       },
       {
-        "group": "Essentials",
+        "group": "Core Concepts",
         "pages": [
           "essentials/test-suite",
           "essentials/test-creation",
           "essentials/remote-browser",
+          "essentials/folders",
           "essentials/ai-steps",
           "essentials/cached-steps",
+          "essentials/agent-context"
+        ]
+      },
+      {
+        "group": "Running Tests",
+        "pages": [
           "essentials/running-test",
-          "essentials/ci-integration",
-          "essentials/agent-context",
-          "essentials/notifications",
-          "essentials/bot-detection",
-          "essentials/webhooks",
-          "essentials/dedicated-mailboxes",
+          "essentials/triggering-tests",
+          "essentials/ci-integration"
+        ]
+      },
+      {
+        "group": "Test Generation",
+        "pages": [
+          "essentials/bulk-create",
+          "essentials/generate-tests"
+        ]
+      },
+      {
+        "group": "Features",
+        "pages": [
           "essentials/file-upload",
+          "essentials/dedicated-mailboxes",
+          "essentials/bot-detection",
           "essentials/tunnel"
+        ]
+      },
+      {
+        "group": "Integrations",
+        "pages": [
+          "essentials/notifications",
+          "essentials/webhooks"
         ]
       }
     ]
