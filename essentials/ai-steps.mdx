@@ -83,6 +83,17 @@ When you write an assertion, Docket takes a **screenshot**, analyzes the page us
 
 If the assertion fails, Docket will mark the test as **failed**, capture a screenshot and reasoning log, and continue or stop depending on your test configuration.
 
+#### Assertion Screenshots (Lookback)
+
+By default, Docket passes the **last 5 screenshots** to the assertion model, giving it context about what happened in preceding steps. You can configure this value between 1 and 10 per step.
+
+To adjust this, click the **gear icon** on any assert or AI step. The icon turns blue when the value differs from the default.
+
+![AI_step_gear.png](/images/AI_step_gear.png)
+![change_assertion_screenshots.png](/images/change_assertion_screenshots.png)
+
+A higher value gives the assertion model more context about preceding actions — useful for multi-step flows where the assertion depends on earlier state. A lower value is faster and works well for assertions that only need the current page state.
+
 ---
 
 ### Writing Good Assertions
