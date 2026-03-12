@@ -1,14 +1,14 @@
 ---
-title: "Cached Steps"
-description: "Understanding and maintaining cached steps in Docket"
+title: "Recorded Steps"
+description: "Understanding and maintaining recorded steps in Docket"
 icon: "bolt"
 ---
 
-### What Are Cached Steps?
+### What Are Recorded Steps?
 
-Cached steps are clicks, hovers, and scrolls that Docket records while you interact with the [remote browser](/essentials/remote-browser) during test creation. Each cached step stores both **the exact screen coordinates** of your action and a **natural language annotation** that describes what you did.
+Recorded steps are clicks, hovers, and scrolls that Docket records while you interact with the [remote browser](/essentials/remote-browser) during test creation. Each recorded step stores both **the exact screen coordinates** of your action and a **natural language annotation** that describes what you did.
 
-You can identify cached steps by the **yellow cache icon** next to them.\
+You can identify recorded steps by the **yellow cache icon** next to them.\
 To see the coordinate that Docket has captured, simply hover over the icon.
 
 > **Tip**: For dynamic workflows or complex logic, consider using [AI Steps](/essentials/ai-steps) instead, which adapt to UI changes automatically.
@@ -17,18 +17,18 @@ To see the coordinate that Docket has captured, simply hover over the icon.
 
 ---
 
-### How Cached Steps Work
+### How Recorded Steps Work
 
-Cached steps execute **sequentially**, one after another. In [recording mode](/essentials/remote-browser#start-recording), they do not waiting for page loads or self heal. Cached steps will auto wait for page loads or try to self heal during full test runs (see below). 
+Recorded steps execute **sequentially**, one after another. In [recording mode](/essentials/remote-browser#start-recording), they do not waiting for page loads or self heal. Recorded steps will auto wait for page loads or try to self heal during full test runs (see below). 
 
-If a minor change is made to your UI, Docket will be able to self heal as long as the annotation of the cached action is correct. 
-However, after major UI changes, it is recommended you ensure your cached steps are up to date.
+If a minor change is made to your UI, Docket will be able to self heal as long as the annotation of the recorded action is correct. 
+However, after major UI changes, it is recommended you ensure your recorded steps are up to date.
 
 ---
 
-### Cached Steps During Full Test Runs
+### Recorded Steps During Full Test Runs
 
-When running a full test (manaully, scheduled, or part of CI/CD), Docket performs a **pre-check** before executing each cached step.\
+When running a full test (manaully, scheduled, or part of CI/CD), Docket performs a **pre-check** before executing each recorded step.\
 If the page hasn’t loaded yet or the click coordinate seems inconsistent with the annotation, Docket will trigger its **AI vision model** to attempt a **self-heal**.
 
 During self-healing, Docket uses:
@@ -43,7 +43,7 @@ This combination of **coordinate precision** and **semantic context** gives Dock
 
 ### Writing Good Annotations
 
-The annotations you see under cached steps (e.g. “click login button”, “scroll to footer”) are critical for Docket’s reasoning and self-healing.
+The annotations you see under recorded steps (e.g. “click login button”, “scroll to footer”) are critical for Docket’s reasoning and self-healing.
 
 Here’s how to make them effective:
 
@@ -86,11 +86,11 @@ Specify the exact element or purpose of the action.
 
 ### Best Practices
 
-- Re-record cached steps after big UI updates
+- Re-record recorded steps after big UI updates
 - Review annotations for clarity
 - Keep English instructions specific and descriptive
 - Minimize unnecessary actions
-- Combine cached steps with [AI steps](/essentials/ai-steps) for resilient flows
+- Combine recorded steps with [AI steps](/essentials/ai-steps) for resilient flows
 
 > **Learn more**: See [AI Steps](/essentials/ai-steps) to understand how to use natural language instructions for dynamic test flows.
 
@@ -98,10 +98,10 @@ Specify the exact element or purpose of the action.
 
 ### Summary
 
-Cached steps are the backbone of Docket's deterministic testing.\
+Recorded steps are the backbone of Docket's deterministic testing.\
 They allow precise replay of user actions while staying flexible through Docket's AI-assisted pre-check and self-healing.
 
-Keep your cached step annotations meaningful and accurate to ensure your tests remain stable, clear, and reliable.
+Keep your recorded step annotations meaningful and accurate to ensure your tests remain stable, clear, and reliable.
 
 **Next Steps:**
 - Learn about [AI Steps](/essentials/ai-steps) for dynamic test flows

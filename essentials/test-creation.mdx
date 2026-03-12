@@ -27,7 +27,7 @@ The URL you provide will be where the Docket Browser agent automatically navigat
 To create tests on Docket, you can simply interact in the [remote browser](/essentials/remote-browser) and Docket will record actions alongside English annotations automatically. 
 
 There are five types of steps you can write on Docket:
-1. **[Cached Steps](/essentials/cached-steps)** - Precise coordinate-based actions that replay exactly as recorded and self-heal when the UI changes
+1. **[Recorded Steps](/essentials/recorded-steps)** - Precise coordinate-based actions that replay exactly as recorded and self-heal when the UI changes
 2. **[AI Steps](/essentials/ai-steps)** - Natural language instructions that adapt to your UI dynamically
 3. **API Steps** - Network requests to endpoints for seeding, setup, and teardown of test resources
 4. **Modules** - Reusable collections of steps that can be shared across multiple tests
@@ -87,7 +87,7 @@ Modules are reusable collections of steps that can be created once and inserted 
 
 **Key features:**
 - **Create and manage** modules in the "Modules" section of Docket
-- **Compose with any step type**: Modules can contain AI steps, cached steps, and API steps
+- **Compose with any step type**: Modules can contain AI steps, recorded steps, and API steps
 - **Cannot nest**: Modules cannot reference other modules
 - **CRUD interface**: The module creation interface is similar to test creation, with a [remote browser](/essentials/remote-browser) for recording interactions
 
@@ -174,7 +174,7 @@ Configure automatic retries when a test fails. Docket will re-run the entire tes
 - **Skipped**: When a test suite is triggered to which this test belongs, this test is skipped and not run. The only way to run this test is via a [Trigger Run](#trigger-run) step or manually through the UI
 
 ### Persist Self-Healed Actions
-When enabled, if the AI agent self-heals a cached step during test execution (e.g., because a button moved), the updated action automatically replaces the original in your test definition. This keeps your tests up to date as your UI evolves without manual re-recording.
+When enabled, if the AI agent self-heals a recorded step during test execution (e.g., because a button moved), the updated action automatically replaces the original in your test definition. This keeps your tests up to date as your UI evolves without manual re-recording.
 **Options:** Disabled (default), Enabled
 
 ### File Download Behavior
