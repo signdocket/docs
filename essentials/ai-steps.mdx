@@ -7,13 +7,13 @@ icon: "sparkles"
 ### Overview
 
 AI steps are natural-language instructions that tell Docket's intelligent agent what to **do** or **verify** in your application.  
-Unlike [cached steps](/essentials/cached-steps), which replay recorded coordinates, AI steps use Docket's **vision and reasoning models** to dynamically interpret your instructions and act accordingly.
+Unlike [recorded steps](/essentials/recorded-steps), which replay recorded coordinates, AI steps use Docket's **vision and reasoning models** to dynamically interpret your instructions and act accordingly.
 
 There are two main types of AI steps in Docket:
 1. **AI Step** – perform an action  
 2. **Assert** – verify a condition  
 
-You can mix and match AI steps and cached steps to build powerful, adaptive, and self-healing tests.
+You can mix and match AI steps and recorded steps to build powerful, adaptive, and self-healing tests.
 
 > **Getting Started**: New to Docket? Start with [Creating a Test](/essentials/test-creation) to learn the basics.
 
@@ -35,7 +35,7 @@ This style tells Docket exactly what to do, one action at a time. It’s ideal f
 - Predictable and repeatable  
 
 **Cons:**
-- [Cached steps](/essentials/cached-steps) are faster and more accurate in this case
+- [Recorded steps](/essentials/recorded-steps) are faster and more accurate in this case
 - Can be verbose for longer flows  
 - May need updating after UI redesigns  
 
@@ -60,7 +60,7 @@ It’s useful for dynamic interfaces, forms, or multi-step workflows that may ch
 
 ### Special Capabilities
 
-Certain actions — such as [**sending or checking emails**](essentials/dedicated-mailboxes) and [**uploading files**](essentials/file-upload) — can only be performed using AI steps. These actions require contextual reasoning and browser-level access that cached steps don’t support.
+Certain actions — such as [**sending or checking emails**](essentials/dedicated-mailboxes) and [**uploading files**](essentials/file-upload) — can only be performed using AI steps. These actions require contextual reasoning and browser-level access that recorded steps don’t support.
 
 **Examples:**
 - Upload the file "contract.pdf" to the upload input on the page.
@@ -149,29 +149,29 @@ This live testing capability helps you refine your AI steps before running the f
 
 ### Combining Cached and AI Steps
 
-You can combine [cached steps](/essentials/cached-steps) and AI steps to achieve a balance of precision and flexibility.
+You can combine [recorded steps](/essentials/recorded-steps) and AI steps to achieve a balance of precision and flexibility.
 
 | Use Case | Recommended Step |
 |-----------|------------------|
-| Deterministic clicks or scrolls | **[Cached Step](/essentials/cached-steps)** |
+| Deterministic clicks or scrolls | **[Recorded Step](/essentials/recorded-steps)** |
 | Dynamic workflows or variable layouts | **AI Step** |
 | Page validations or checks | **Assert Step** |
 | File uploads or email actions | **AI Step** |
 
 **Example Combined Flow:**
-- [Cached Step] Click "Sign In"
+- [Recorded Step] Click "Sign In"
 - [AI Step] Login using "nishant@docketqa.com" and "password123"
 - [Assert Step] Assert that the dashboard loads successfully
 
 #### Important: Page State After AI Steps
 
-When using AI steps followed by cached steps, it's **critical** to consider where your AI step will leave the page once complete. Cached steps rely on specific screen coordinates, so if an AI step ends on an unexpected page state, scroll position, or modal, subsequent cached actions may fail or become flaky.
+When using AI steps followed by recorded steps, it's **critical** to consider where your AI step will leave the page once complete. Recorded steps rely on specific screen coordinates, so if an AI step ends on an unexpected page state, scroll position, or modal, subsequent recorded actions may fail or become flaky.
 
 **Best Practices:**
 - Be explicit about the final state in your AI step (e.g., "Login and ensure you're on the dashboard")
-- Verify the page has fully loaded before transitioning to cached steps
-- If using modals or overlays, explicitly close them in the AI step if cached steps follow
-- Consider adding a brief assertion to confirm the expected page state before cached steps execute
+- Verify the page has fully loaded before transitioning to recorded steps
+- If using modals or overlays, explicitly close them in the AI step if recorded steps follow
+- Consider adding a brief assertion to confirm the expected page state before recorded steps execute
 
 **Example:**
 ```
@@ -179,6 +179,6 @@ When using AI steps followed by cached steps, it's **critical** to consider wher
 ✅ Good: "Login using credentials and wait for the dashboard to fully load"
 ```
 
-This ensures cached steps start from a predictable, consistent state and reduces test flakiness.
+This ensures recorded steps start from a predictable, consistent state and reduces test flakiness.
 
-> **Learn more**: See [Cached Steps](/essentials/cached-steps) to understand how coordinate-based actions work and when to use them.
+> **Learn more**: See [Recorded Steps](/essentials/recorded-steps) to understand how coordinate-based actions work and when to use them.

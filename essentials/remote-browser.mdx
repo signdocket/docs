@@ -30,16 +30,16 @@ Shows the current state of the browser instance. The browser cycles through seve
 - **Stopping**: Browser was stopped and will go offline
 
 #### Self Heal Toggle
-Controls how [cached steps](/essentials/cached-steps) replay during test execution.
+Controls how [recorded steps](/essentials/recorded-steps) replay during test execution.
 
-- **Enabled** (default): Before replaying each cached step, Docket performs a check to see if the element is still available at the saved coordinates. If the check passes, the step executes normally. If the element has moved or is unavailable, the agent self-heals by locating it using the step description and action
+- **Enabled** (default): Before replaying each recorded step, Docket performs a check to see if the element is still available at the saved coordinates. If the check passes, the step executes normally. If the element has moved or is unavailable, the agent self-heals by locating it using the step description and action
 - **Disabled**: The agent will directly replay from the exact saved coordinates without performing any checks or attempting to adapt
 
 #### Run from Step
 Executes your test starting from the currently selected step (highlighted in blue) and continues through subsequent steps in sequence. The execution respects the Self Heal toggle setting.
 
 #### Start Recording
-Enables recording mode where you can interact with the embedded browser and Docket will automatically capture and cache your actions. This is the primary way to create [cached steps](/essentials/cached-steps).
+Enables recording mode where you can interact with the embedded browser and Docket will automatically capture and cache your actions. This is the primary way to create [recorded steps](/essentials/recorded-steps).
 
 #### Resync Browser
 Manually synchronizes the browser with your current test configuration. This updates:
