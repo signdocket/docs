@@ -1,0 +1,123 @@
+---
+title: "List Tests"
+api: "GET /test_blueprint/list"
+---
+
+Retrieve all test blueprints in your account.
+
+<ResponseField name="test_blueprints" type="object[]">
+  An array of test blueprint objects.
+
+  <Expandable title="Test blueprint properties">
+    <ResponseField name="id" type="integer">
+      The unique ID of the test blueprint.
+    </ResponseField>
+
+    <ResponseField name="title" type="string">
+      The test name.
+    </ResponseField>
+
+    <ResponseField name="type" type="string">
+      The test type (e.g. `"integration"`).
+    </ResponseField>
+
+    <ResponseField name="status" type="string">
+      The test status: `"active"` or `"paused"`.
+    </ResponseField>
+
+    <ResponseField name="starting_url" type="string">
+      The starting URL for the test.
+    </ResponseField>
+
+    <ResponseField name="step_count" type="integer">
+      The number of steps in the test.
+    </ResponseField>
+
+    <ResponseField name="test_blueprint_category_id" type="integer">
+      The test suite this test belongs to.
+    </ResponseField>
+
+    <ResponseField name="test_blueprint_category_name" type="string">
+      The name of the test suite.
+    </ResponseField>
+
+    <ResponseField name="last_run" type="string">
+      ISO 8601 timestamp of the most recent run.
+    </ResponseField>
+
+    <ResponseField name="last_status" type="string">
+      The result of the most recent run (e.g. `"passed"`, `"failed"`).
+    </ResponseField>
+
+    <ResponseField name="company_id" type="integer">
+      Your company ID.
+    </ResponseField>
+
+    <ResponseField name="created_by" type="integer">
+      The ID of the user who created the test.
+    </ResponseField>
+
+    <ResponseField name="browser_zoom" type="number">
+      The browser zoom level.
+    </ResponseField>
+
+    <ResponseField name="viewport_width" type="integer">
+      Browser viewport width in pixels.
+    </ResponseField>
+
+    <ResponseField name="viewport_height" type="integer">
+      Browser viewport height in pixels.
+    </ResponseField>
+
+    <ResponseField name="num_retries" type="integer">
+      Number of automatic retries on failure.
+    </ResponseField>
+
+    <ResponseField name="files" type="object[]">
+      Files attached to this test.
+    </ResponseField>
+
+    <ResponseField name="variables" type="object[]">
+      Variables defined for this test.
+    </ResponseField>
+
+    <ResponseField name="created_at" type="string">
+      ISO 8601 timestamp of when the test was created.
+    </ResponseField>
+
+    <ResponseField name="updated_at" type="string">
+      ISO 8601 timestamp of the last update.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example response
+
+```json
+{
+  "test_blueprints": [
+    {
+      "id": 446,
+      "title": "Randomized Campaign Creation",
+      "type": "integration",
+      "status": "active",
+      "starting_url": "https://app.example.com/",
+      "step_count": 38,
+      "test_blueprint_category_id": 26,
+      "test_blueprint_category_name": "Campaigns",
+      "last_run": "2025-10-10T21:05:19.847072+00:00",
+      "last_status": "failed",
+      "company_id": 3,
+      "created_by": 5,
+      "browser_zoom": 1.0,
+      "viewport_width": 1900,
+      "viewport_height": 1200,
+      "num_retries": 0,
+      "files": [],
+      "variables": [],
+      "created_at": "2025-10-07T00:53:44.522824+00:00",
+      "updated_at": "2025-10-07T00:54:00.587872+00:00"
+    }
+  ]
+}
+```

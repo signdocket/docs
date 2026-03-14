@@ -1,0 +1,125 @@
+---
+title: "Get Module"
+api: "GET /modules/{module_id}"
+---
+
+Retrieve a specific module by its ID, including all of its steps.
+
+<ParamField path="module_id" type="integer" required>
+  The ID of the module to retrieve.
+</ParamField>
+
+<ResponseField name="module" type="object">
+  The module object.
+
+  <Expandable title="Properties">
+    <ResponseField name="id" type="integer">
+      The unique ID of the module.
+    </ResponseField>
+
+    <ResponseField name="title" type="string">
+      The module name.
+    </ResponseField>
+
+    <ResponseField name="type" type="string">
+      Always `"step_module"` for modules.
+    </ResponseField>
+
+    <ResponseField name="status" type="string">
+      The module status (e.g. `"active"`).
+    </ResponseField>
+
+    <ResponseField name="company_id" type="integer">
+      Your company ID.
+    </ResponseField>
+
+    <ResponseField name="browser_zoom" type="number">
+      The browser zoom level.
+    </ResponseField>
+
+    <ResponseField name="viewport_width" type="integer">
+      Browser viewport width.
+    </ResponseField>
+
+    <ResponseField name="viewport_height" type="integer">
+      Browser viewport height.
+    </ResponseField>
+
+    <ResponseField name="test_steps" type="object[]">
+      The list of steps in this module.
+
+      <Expandable title="Step properties">
+        <ResponseField name="id" type="integer">
+          The unique step ID.
+        </ResponseField>
+
+        <ResponseField name="step_number" type="integer">
+          Position of this step in the sequence.
+        </ResponseField>
+
+        <ResponseField name="type" type="string">
+          The step type: `"act"`, `"assert"`, or `"api"`.
+        </ResponseField>
+
+        <ResponseField name="action" type="string">
+          The step instruction.
+        </ResponseField>
+
+        <ResponseField name="use_vision" type="boolean">
+          Whether vision is enabled for this step.
+        </ResponseField>
+
+        <ResponseField name="api_request" type="object">
+          The API request configuration (for `api` steps only).
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+
+    <ResponseField name="test_blueprints_using_module" type="object[]">
+      List of test blueprints that reference this module.
+    </ResponseField>
+
+    <ResponseField name="usage_count" type="integer">
+      Number of tests using this module.
+    </ResponseField>
+
+    <ResponseField name="created_at" type="string">
+      ISO 8601 timestamp of when the module was created.
+    </ResponseField>
+
+    <ResponseField name="updated_at" type="string">
+      ISO 8601 timestamp of the last update.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example response
+
+```json
+{
+  "module": {
+    "id": 962,
+    "title": "Login Setup",
+    "type": "step_module",
+    "status": "active",
+    "company_id": 23,
+    "browser_zoom": 1.0,
+    "viewport_width": 1900,
+    "viewport_height": 1200,
+    "usage_count": 0,
+    "test_blueprints_using_module": [],
+    "test_steps": [
+      {
+        "id": 23101,
+        "step_number": 1,
+        "type": "act",
+        "action": "Navigate to the login page",
+        "use_vision": false,
+        "api_request": null
+      }
+    ],
+    "created_at": "2025-12-13T18:53:37.588258+00:00",
+    "updated_at": "2025-12-13T18:53:37.588265+00:00"
+  }
+}
+```

@@ -1,0 +1,194 @@
+---
+title: "Create Test"
+api: "POST /test_blueprint/create"
+---
+
+Create a new test blueprint with a title, starting URL, and a sequence of steps.
+
+<ParamField body="title" type="string" required>
+  The name of the test.
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  The test type. Must be `"integration"`.
+</ParamField>
+
+<ParamField body="test_blueprint_category_id" type="integer">
+  The ID of the test suite (folder) this test belongs to. You can find this ID in the Docket dashboard URL when on the Test Suites Tab.
+</ParamField>
+
+<ParamField body="starting_url" type="string" required>
+  The URL the browser navigates to before executing steps.
+</ParamField>
+
+<ParamField body="steps" type="object[]" required>
+  An ordered list of steps for the test to execute.
+
+  <Expandable title="Step object properties">
+    <ParamField body="step_number" type="integer" required>
+      The position of this step in the sequence (starting from 1).
+    </ParamField>
+
+    <ParamField body="type" type="string" required>
+      The step type. Use `"act"` for actions and `"assert"` for assertions.
+    </ParamField>
+
+    <ParamField body="action" type="string" required>
+      A natural language instruction describing what the step should do.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Example request body
+
+```json
+{
+  "title": "Login Flow",
+  "type": "integration",
+  "test_blueprint_category_id": 12,
+  "starting_url": "https://example.com/login",
+  "steps": [
+    {
+      "step_number": 1,
+      "type": "act",
+      "action": "Enter 'user@example.com' in the email field"
+    },
+    {
+      "step_number": 2,
+      "type": "act",
+      "action": "Enter 'password123' in the password field"
+    },
+    {
+      "step_number": 3,
+      "type": "act",
+      "action": "Click the 'Log In' button"
+    },
+    {
+      "step_number": 4,
+      "type": "assert",
+      "action": "Verify user is redirected to the dashboard page"
+    },
+    {
+      "step_number": 5,
+      "type": "assert",
+      "action": "Verify the welcome message displays the user's name"
+    }
+  ]
+}
+```
+
+<ResponseField name="message" type="string">
+  A confirmation message (e.g. `"Test blueprint created successfully"`).
+</ResponseField>
+
+<ResponseField name="test_blueprint" type="object">
+  The created test blueprint object.
+
+  <Expandable title="Properties">
+    <ResponseField name="id" type="integer">
+      The unique ID of the test blueprint.
+    </ResponseField>
+
+    <ResponseField name="company_id" type="integer">
+      Your company ID.
+    </ResponseField>
+
+    <ResponseField name="title" type="string">
+      The test title.
+    </ResponseField>
+
+    <ResponseField name="type" type="string">
+      The test type (`"integration"`).
+    </ResponseField>
+
+    <ResponseField name="starting_url" type="string">
+      The starting URL for the test.
+    </ResponseField>
+
+    <ResponseField name="starting_prompt" type="string">
+      The high-level description of the test.
+    </ResponseField>
+
+    <ResponseField name="test_blueprint_category_id" type="integer">
+      The test suite ID.
+    </ResponseField>
+
+    <ResponseField name="steps" type="object[]">
+      The list of test steps with their generated IDs.
+    </ResponseField>
+
+    <ResponseField name="created_by" type="integer">
+      The ID of the user who created the test.
+    </ResponseField>
+
+    <ResponseField name="created_at" type="string">
+      ISO 8601 timestamp of when the test was created.
+    </ResponseField>
+
+    <ResponseField name="updated_at" type="string">
+      ISO 8601 timestamp of when the test was last updated.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example response
+
+```json
+{
+  "message": "Test blueprint created successfully",
+  "test_blueprint": {
+    "company_id": 2,
+    "created_at": "2025-07-03T01:45:55.486917+00:00",
+    "created_by": 4,
+    "id": 181,
+    "starting_prompt": null,
+    "starting_url": "https://example.com/login",
+    "steps": [
+      {
+        "action": "Enter 'user@example.com' in the email field",
+        "id": 564,
+        "step_number": 1,
+        "test_blueprint_id": 181,
+        "type": "act",
+        "use_vision": false
+      },
+      {
+        "action": "Enter 'password123' in the password field",
+        "id": 565,
+        "step_number": 2,
+        "test_blueprint_id": 181,
+        "type": "act",
+        "use_vision": false
+      },
+      {
+        "action": "Click the 'Log In' button",
+        "id": 566,
+        "step_number": 3,
+        "test_blueprint_id": 181,
+        "type": "act",
+        "use_vision": false
+      },
+      {
+        "action": "Verify user is redirected to the dashboard page",
+        "id": 567,
+        "step_number": 4,
+        "test_blueprint_id": 181,
+        "type": "assert",
+        "use_vision": false
+      },
+      {
+        "action": "Verify the welcome message displays the user's name",
+        "id": 568,
+        "step_number": 5,
+        "test_blueprint_id": 181,
+        "type": "assert",
+        "use_vision": false
+      }
+    ],
+    "test_blueprint_category_id": 4,
+    "title": "Login Flow",
+    "type": "integration",
+    "updated_at": "2025-07-03T01:45:55.486923+00:00"
+  }
+}
+```

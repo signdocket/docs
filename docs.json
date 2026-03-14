@@ -8,7 +8,16 @@
     "dark": "#161716"
   },
   "favicon": "/favicon.ico",
-"navigation": {
+  "api": {
+    "mdx": {
+      "server": "https://api.docketqa.com",
+      "auth": {
+        "method": "key",
+        "name": "X-API-KEY"
+      }
+    }
+  },
+  "navigation": {
     "groups": [
       {
         "group": "Get Started",
@@ -58,6 +67,30 @@
         "pages": [
           "essentials/notifications",
           "essentials/webhooks"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "api-reference/introduction",
+          {
+            "group": "Tests",
+            "pages": [
+              "api-reference/endpoint/create-test",
+              "api-reference/endpoint/run-test",
+              "api-reference/endpoint/get-test-run",
+              "api-reference/endpoint/list-tests"
+            ]
+          },
+          {
+            "group": "Modules",
+            "pages": [
+              "api-reference/endpoint/create-module",
+              "api-reference/endpoint/get-module",
+              "api-reference/endpoint/list-modules",
+              "api-reference/endpoint/update-module"
+            ]
+          }
         ]
       }
     ]
