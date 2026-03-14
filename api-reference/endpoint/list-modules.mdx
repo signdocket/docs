@@ -1,0 +1,161 @@
+---
+title: "List Modules"
+api: "GET /modules/list"
+---
+
+Retrieve modules in your account, with optional filtering by ID and step inclusion.
+
+<ParamField query="ids" type="string">
+  Comma-separated list of module IDs to fetch. Omit to retrieve all modules.
+</ParamField>
+
+<ParamField query="with_steps" type="boolean">
+  Whether to include the full step details for each module. Defaults to `false`.
+</ParamField>
+
+### Example requests
+
+Fetch all modules without steps:
+
+```bash
+GET /modules/list
+```
+
+Fetch specific modules with steps:
+
+```bash
+GET /modules/list?ids=962,964&with_steps=true
+```
+
+<ResponseField name="modules" type="object[]">
+  An array of module objects.
+
+  <Expandable title="Module properties">
+    <ResponseField name="id" type="integer">
+      The unique ID of the module.
+    </ResponseField>
+
+    <ResponseField name="title" type="string">
+      The module name.
+    </ResponseField>
+
+    <ResponseField name="type" type="string">
+      Always `"step_module"` for modules.
+    </ResponseField>
+
+    <ResponseField name="status" type="string">
+      The module status (e.g. `"active"`).
+    </ResponseField>
+
+    <ResponseField name="step_count" type="integer">
+      Number of steps in the module.
+    </ResponseField>
+
+    <ResponseField name="company_id" type="integer">
+      Your company ID.
+    </ResponseField>
+
+    <ResponseField name="browser_zoom" type="number">
+      The browser zoom level.
+    </ResponseField>
+
+    <ResponseField name="viewport_width" type="integer">
+      Browser viewport width.
+    </ResponseField>
+
+    <ResponseField name="viewport_height" type="integer">
+      Browser viewport height.
+    </ResponseField>
+
+    <ResponseField name="test_steps" type="object[]">
+      The steps in the module. Only included when `with_steps=true`.
+    </ResponseField>
+
+    <ResponseField name="usage_count" type="integer">
+      Number of tests using this module.
+    </ResponseField>
+
+    <ResponseField name="created_at" type="string">
+      ISO 8601 timestamp of when the module was created.
+    </ResponseField>
+
+    <ResponseField name="updated_at" type="string">
+      ISO 8601 timestamp of the last update.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example response
+
+```json
+{
+  "modules": [
+    {
+      "id": 962,
+      "title": "Login Setup",
+      "type": "step_module",
+      "status": "active",
+      "step_count": 1,
+      "company_id": 23,
+      "browser_zoom": 1.0,
+      "viewport_width": 1900,
+      "viewport_height": 1200,
+      "usage_count": 0,
+      "test_steps": [
+        {
+          "id": 23101,
+          "step_number": 1,
+          "type": "act",
+          "action": "Navigate to the login page",
+          "use_vision": false
+        }
+      ],
+      "created_at": "2025-12-13T18:53:37.588258+00:00",
+      "updated_at": "2025-12-13T18:53:37.588265+00:00"
+    },
+    {
+      "id": 964,
+      "title": "Auth Token Module",
+      "type": "step_module",
+      "status": "active",
+      "step_count": 3,
+      "company_id": 23,
+      "browser_zoom": 1.0,
+      "viewport_width": 1900,
+      "viewport_height": 1200,
+      "usage_count": 0,
+      "test_steps": [
+        {
+          "id": 23103,
+          "step_number": 1,
+          "type": "act",
+          "action": "First AI step instructions",
+          "use_vision": false
+        },
+        {
+          "id": 23104,
+          "step_number": 2,
+          "type": "api",
+          "action": "",
+          "use_vision": false,
+          "api_request": {
+            "url": "https://api.example.com/auth",
+            "method": "POST",
+            "timeout": 60,
+            "retries": 1
+          }
+        },
+        {
+          "id": 23105,
+          "step_number": 3,
+          "type": "assert",
+          "action": "Verify auth succeeded",
+          "use_vision": false
+        }
+      ],
+      "created_at": "2025-12-13T18:58:45.895773+00:00",
+      "updated_at": "2025-12-13T18:58:45.895781+00:00"
+    }
+  ]
+}
+```

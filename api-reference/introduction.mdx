@@ -1,33 +1,55 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "API Reference"
+description: "Programmatically create, run, and manage your Docket tests and modules"
+icon: "code"
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+The Docket API lets you integrate Docket into your workflows by creating tests, triggering runs, and managing reusable modules programmatically.
 
-## Welcome
+**Base URL:**
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+```
+https://api.docketqa.com
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API requests require an `X-API-KEY` header. You can find your API key in your [Docket account CI/CD tab](https://app.docketqa.com/).
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+```bash
+curl -X GET https://api.docketqa.com/test_blueprint/list \
+  -H "X-API-KEY: your-api-key"
 ```
+
+<Warning>
+  Keep your API key secret. Do not expose it in client-side code or public repositories.
+</Warning>
+
+## Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Create Test" icon="plus" href="/api-reference/endpoint/create-test">
+    Create a new test blueprint with steps
+  </Card>
+  <Card title="Run Test" icon="play" href="/api-reference/endpoint/run-test">
+    Trigger a test run for one or more tests
+  </Card>
+  <Card title="Get Test Run" icon="magnifying-glass" href="/api-reference/endpoint/get-test-run">
+    Retrieve results for a specific test run
+  </Card>
+  <Card title="List Tests" icon="list" href="/api-reference/endpoint/list-tests">
+    List all test blueprints in your account
+  </Card>
+  <Card title="Create Module" icon="cube-plus" href="/api-reference/endpoint/create-module">
+    Create a reusable step module
+  </Card>
+  <Card title="Get Module" icon="cube" href="/api-reference/endpoint/get-module">
+    Retrieve a specific module by ID
+  </Card>
+  <Card title="List Modules" icon="cubes" href="/api-reference/endpoint/list-modules">
+    List modules with optional filtering
+  </Card>
+  <Card title="Update Module" icon="pen-to-square" href="/api-reference/endpoint/update-module">
+    Update an existing module
+  </Card>
+</CardGroup>
