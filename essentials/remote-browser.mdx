@@ -6,12 +6,12 @@ icon: "browser"
 
 ### Overview
 
-Docket launches a single persistent browser instance that stays active as you create and edit tests. This browser is embedded in the side panel and synchronizes with whichever test configuration you're currently working on.
+Docket launches a single persistent browser instance that stays active as you create and edit tests. This browser is embedded in the side panel and automatically stays in sync with your current test configuration.
 
 **Key behaviors:**
-- **Single active tab**: The browser can only be used in one tab at a time. If you open Docket in multiple tabs, only one will have access to the browser—others will show the browser as "busy"
+- **Single active tab**: The browser can only be used in one tab at a time. If you open Docket in multiple tabs, only one will have access to the browser; others will show the browser as "busy"
 - **Persistent session**: The browser stays active as long as you continue creating or editing tests, maintaining your session state
-- **Manual synchronization**: When you switch between test configurations or make changes, use the "Resync Browser" button to sync the browser to the current test context
+- **Auto-sync**: Changes to test configuration (variables, files, and logged-in user session) are automatically synced to the browser. A browser restart is only needed when changing the entrypoint URL, viewport size, zoom level, or when the underlying browser needs to be restarted
 
 ### Browser Controls
 
@@ -41,16 +41,8 @@ Executes your test starting from the currently selected step (highlighted in blu
 #### Start Recording
 Enables recording mode where you can interact with the embedded browser and Docket will automatically capture and cache your actions. This is the primary way to create [recorded steps](/essentials/recorded-steps).
 
-#### Resync Browser
-Manually synchronizes the browser with your current test configuration. This updates:
-- Variables (text, email, random alphanumeric)
-- Uploaded files
-- Viewport size
-- Zoom level
-- Entrypoint URL
-- Logged-in user session (if any)
-
-**Note**: Resync is not automatic—you need to click this button when switching between tests or after making configuration changes. However, Docket will detect when you switch to a different test and show an overlay with options to sync or ignore the change.
+#### Restart Browser
+Restarts the browser instance with the current test configuration. Most configuration changes (variables, files, and logged-in user session) auto-sync and don't require a restart. You only need to restart the browser when changing the entrypoint URL, viewport size, zoom level, or when the browser itself needs a fresh start.
 
 #### Stop Browser
 Terminates the browser instance. You'll need to launch a new browser when you want to continue creating or editing tests.
