@@ -11,7 +11,7 @@ Docket launches a single persistent browser instance that stays active as you cr
 **Key behaviors:**
 - **Single active tab**: The browser can only be used in one tab at a time. If you open Docket in multiple tabs, only one will have access to the browser; others will show the browser as "busy"
 - **Persistent session**: The browser stays active as long as you continue creating or editing tests, maintaining your session state
-- **Auto-sync**: Changes to test configuration (variables, files, and logged-in user session) are automatically synced to the browser. A browser restart is only needed when changing the entrypoint URL, viewport size, zoom level, or when the underlying browser needs to be restarted
+- **Auto-sync**: Changes to test configuration (variables, files, and logged-in user session) are automatically synced to the browser. A resync is only needed when changing viewport size, zoom level, or when the underlying browser needs to be restarted. Changing the entrypoint URL will prompt you with an option to navigate to the new URL
 
 ### Browser Controls
 
@@ -42,7 +42,12 @@ Executes your test starting from the currently selected step (highlighted in blu
 Enables recording mode where you can interact with the embedded browser and Docket will automatically capture and cache your actions. This is the primary way to create [recorded steps](/essentials/recorded-steps).
 
 #### Resync Browser
-Restarts the browser instance with the current test configuration. Most configuration changes (variables, files, and logged-in user session) auto-sync and don't require a restart. You only need to restart the browser when changing the entrypoint URL, viewport size, zoom level, or when the browser itself needs a fresh start.
+Opens a resync dialog with two options:
+
+- **Navigate to URL**: Navigates the browser to the test's entrypoint URL
+- **Restart browser**: Restarts the browser and applies hard-sync settings like viewport size, zoom level, etc.
+
+Most configuration changes (variables, files, and logged-in user session) auto-sync and don't require a resync.
 
 #### Stop Browser
 Terminates the browser instance. You'll need to launch a new browser when you want to continue creating or editing tests.
