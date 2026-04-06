@@ -5,41 +5,268 @@ api: "POST /test_blueprint/create"
 
 Create a new test blueprint with a title, starting URL, and a sequence of steps.
 
+## Request body
+
+### Required fields
+
 <ParamField body="title" type="string" required>
-  The name of the test.
+  The name of the test. Must be between 1 and 128 characters and unique within your account.
 </ParamField>
 
 <ParamField body="type" type="string" required>
-  The test type. Must be `"integration"`.
-</ParamField>
+  The blueprint type. Must be one of:
+  - `"integration"` — a standard end-to-end test
+  - `"module"` — an account/login module (requires `starting_url` and `credentials`)
 
-<ParamField body="test_blueprint_category_id" type="integer">
-  The ID of the test suite (folder) this test belongs to. You can find this ID in the Docket dashboard URL when on the Test Suites Tab.
-</ParamField>
-
-<ParamField body="starting_url" type="string" required>
-  The URL the browser navigates to before executing steps.
+  <Note>
+    To create reusable step modules, use the [Create Module](/api-reference/endpoint/create-module) endpoint instead.
+  </Note>
 </ParamField>
 
 <ParamField body="steps" type="object[]" required>
-  An ordered list of steps for the test to execute.
+  An ordered list of steps for the test to execute. Required for `integration` type.
 
   <Expandable title="Step object properties">
     <ParamField body="step_number" type="integer" required>
-      The position of this step in the sequence (starting from 1).
+      The position of this step in the sequence (starting from 1). Must be unique within the test.
     </ParamField>
 
     <ParamField body="type" type="string" required>
-      The step type. Use `"act"` for actions and `"assert"` for assertions.
+      The step type. Available types:
+
+      **AI steps:**
+      - `"act"` — an AI-driven browser action (e.g. click, type, navigate). Action text must not be empty.
+      - `"assert"` — an AI-driven assertion that verifies something on the page.
+
+      **Module & orchestration:**
+      - `"step_module"` — execute a reusable module. Requires `test_blueprint_module_id`.
+      - `"trigger_run"` — trigger another test as a sub-run. Requires `trigger_run_config`.
+
+      **API step:**
+      - `"api"` — make an HTTP request. Requires `api_request`.
+
+      **Recorded/low-level steps:**
+      - `"key"` — press a keyboard key.
+      - `"type"` — type text into the focused element.
+      - `"mouse_move"` — move the mouse to coordinates.
+      - `"left_click"` — left click at coordinates.
+      - `"left_click_drag"` — click and drag from one point to another.
+      - `"right_click"` — right click at coordinates.
+      - `"double_click"` — double click at coordinates.
+      - `"triple_click"` — triple click at coordinates.
+      - `"scroll"` — scroll the page.
+      - `"wait"` — wait for a duration.
+
+      **Mobile-only:**
+      - `"deeplink"` — open a deep link URL. Only supported when `device_type` is `"android"` or `"ios"`.
     </ParamField>
 
     <ParamField body="action" type="string" required>
-      A natural language instruction describing what the step should do.
+      A natural language instruction describing what the step should do. For recorded steps, this contains the coordinates or key data. For `api` steps, this can be left empty.
+    </ParamField>
+
+    <ParamField body="use_vision" type="boolean">
+      Whether to enable vision (screenshot analysis) for this step. Defaults to `false`.
+    </ParamField>
+
+    <ParamField body="test_blueprint_module_id" type="integer">
+      The ID of the module to execute. **Required** when `type` is `"step_module"`.
+    </ParamField>
+
+    <ParamField body="api_request" type="object">
+      The HTTP request configuration. Required for steps with `type: "api"`.
+
+      <Expandable title="API request properties">
+        <ParamField body="url" type="string" required>
+          The full URL to send the request to.
+        </ParamField>
+
+        <ParamField body="method" type="string" required>
+          The HTTP method (e.g. `"GET"`, `"POST"`, `"PUT"`, `"DELETE"`).
+        </ParamField>
+
+        <ParamField body="headers" type="object">
+          Key-value pairs for request headers.
+        </ParamField>
+
+        <ParamField body="body" type="object">
+          The request body (for POST, PUT, PATCH requests).
+        </ParamField>
+
+        <ParamField body="timeout" type="integer">
+          Request timeout in seconds. Defaults to `60`.
+        </ParamField>
+
+        <ParamField body="retries" type="integer">
+          Number of retries on failure. Defaults to `1`.
+        </ParamField>
+
+        <ParamField body="backoff_seconds" type="number">
+          Delay between retries in seconds. Defaults to `2.5`.
+        </ParamField>
+
+        <ParamField body="should_refresh_page" type="boolean">
+          Whether to refresh the browser page after the API call. Defaults to `false`.
+        </ParamField>
+      </Expandable>
+    </ParamField>
+
+    <ParamField body="trigger_run_config" type="object">
+      Configuration for triggering another test. Required when `type` is `"trigger_run"`.
+
+      <Expandable title="Trigger run config properties">
+        <ParamField body="test_blueprint_id" type="integer" required>
+          The ID of the test blueprint to trigger as a sub-run.
+        </ParamField>
+      </Expandable>
+    </ParamField>
+
+    <ParamField body="attached_file_ids" type="integer[]">
+      Array of file IDs to attach to this step. Files must be uploaded to the test blueprint first.
+    </ParamField>
+
+    <ParamField body="assert_images_count" type="integer">
+      Number of screenshot images to capture for assertion steps. Defaults to `5`.
+    </ParamField>
+
+    <ParamField body="disable_self_healing" type="boolean">
+      Disable automatic self-healing for this step. Defaults to `false`.
+    </ParamField>
+
+    <ParamField body="click_count" type="integer">
+      Number of clicks to perform for click-type steps. Defaults to `1`.
+    </ParamField>
+
+    <ParamField body="hold_start_duration" type="number">
+      Duration in seconds to hold before the action. Defaults to `0`.
+    </ParamField>
+
+    <ParamField body="hold_end_duration" type="number">
+      Duration in seconds to hold after the action. Defaults to `0`.
     </ParamField>
   </Expandable>
 </ParamField>
 
-### Example request body
+### Optional fields
+
+<ParamField body="starting_url" type="string">
+  The URL the browser navigates to before executing steps. Must be a valid URL starting with `http://` or `https://`. **Required** when `type` is `"module"`.
+</ParamField>
+
+<ParamField body="starting_prompt" type="string">
+  A high-level description of what the test does. Used as additional context for the AI agent.
+</ParamField>
+
+<ParamField body="test_blueprint_category_id" type="integer">
+  The ID of the test suite this test belongs to. You can find this ID in the Docket dashboard URL when on the Test Suites tab.
+</ParamField>
+
+<ParamField body="folder_path" type="string">
+  The folder path for organizing the test. Defaults to `"/"`.
+</ParamField>
+
+<ParamField body="device_type" type="string">
+  The device to run the test on. Must be one of:
+  - `"browser"` — desktop browser (default)
+  - `"android"` — Android device
+  - `"ios"` — iOS device
+</ParamField>
+
+<ParamField body="device_name" type="string">
+  The specific device name to use for mobile testing (when `device_type` is `"android"` or `"ios"`).
+</ParamField>
+
+<ParamField body="app_id" type="integer">
+  The ID of the mobile app to associate with this test. Used for Android and iOS testing.
+</ParamField>
+
+<ParamField body="browser_zoom" type="number">
+  Browser zoom level. Must be between `0.75` and `2.0`. Defaults to `1.0`.
+</ParamField>
+
+<ParamField body="viewport_width" type="integer">
+  Browser viewport width in pixels. Defaults to `1440`.
+</ParamField>
+
+<ParamField body="viewport_height" type="integer">
+  Browser viewport height in pixels. Defaults to `900`.
+</ParamField>
+
+<ParamField body="num_retries" type="integer">
+  Number of automatic retries if the test fails. Must be between `0` and `3`. Defaults to `0`.
+</ParamField>
+
+<ParamField body="reset_browser_on_retry" type="boolean">
+  Whether to reset the browser session on retry. Defaults to `true`.
+</ParamField>
+
+<ParamField body="typing_speed" type="integer">
+  Typing speed in milliseconds per character. Must be between `1` and `1000`. Defaults to `null` (uses the default speed of 12ms).
+</ParamField>
+
+<ParamField body="persist_self_healed" type="boolean">
+  Whether to persist self-healed action caches so future runs use the healed selectors. Defaults to `true`.
+</ParamField>
+
+<ParamField body="file_download_mode" type="string">
+  How to handle file downloads during the test. Must be one of:
+  - `"save_only"` — save downloaded files without processing (default)
+  - `"ingest_content"` — save and ingest file contents for the AI agent to use
+</ParamField>
+
+<ParamField body="variables" type="object[]">
+  Variables that can be referenced in step actions using `{{variable_key}}` syntax.
+
+  <Expandable title="Variable object properties">
+    <ParamField body="key" type="string" required>
+      The variable name (used as the reference key in steps).
+    </ParamField>
+
+    <ParamField body="type" type="string" required>
+      The variable type: `"text"`, `"email"`, or `"random"`.
+    </ParamField>
+
+    <ParamField body="value" type="string">
+      The static value for `text` type variables.
+    </ParamField>
+
+    <ParamField body="randomConfig" type="object">
+      Configuration for `random` type variables.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="setup_module" type="integer">
+  The ID of a module to run **before** the test steps begin. Useful for common setup tasks like authentication.
+</ParamField>
+
+<ParamField body="teardown_module" type="integer">
+  The ID of a module to run **after** the test steps complete. Useful for cleanup tasks.
+</ParamField>
+
+<ParamField body="status" type="string">
+  The initial status of the test. Must be `"active"` or `"paused"`. Defaults to `"active"`.
+</ParamField>
+
+<ParamField body="credentials" type="object">
+  Login credentials for `module` (account) type blueprints. **Required** when `type` is `"module"`.
+
+  <Expandable title="Credentials properties">
+    <ParamField body="username" type="string" required>
+      The login username or email.
+    </ParamField>
+
+    <ParamField body="password" type="string" required>
+      The login password.
+    </ParamField>
+
+    <ParamField body="otp_secret" type="string">
+      Optional TOTP secret for two-factor authentication.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Example: Basic integration test
 
 ```json
 {
@@ -67,15 +294,61 @@ Create a new test blueprint with a title, starting URL, and a sequence of steps.
       "step_number": 4,
       "type": "assert",
       "action": "Verify user is redirected to the dashboard page"
-    },
-    {
-      "step_number": 5,
-      "type": "assert",
-      "action": "Verify the welcome message displays the user's name"
     }
   ]
 }
 ```
+
+### Example: Test with module, API step, and variables
+
+```json
+{
+  "title": "Create Campaign with API Setup",
+  "type": "integration",
+  "starting_url": "https://app.example.com",
+  "setup_module": 42,
+  "num_retries": 1,
+  "variables": [
+    {
+      "key": "campaign_name",
+      "type": "random",
+      "randomConfig": { "prefix": "Test Campaign " }
+    }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "type": "api",
+      "action": "",
+      "api_request": {
+        "url": "https://api.example.com/campaigns",
+        "method": "POST",
+        "headers": { "Authorization": "Bearer {{token}}" },
+        "body": { "name": "{{campaign_name}}" },
+        "timeout": 30
+      }
+    },
+    {
+      "step_number": 2,
+      "type": "act",
+      "action": "Navigate to the campaigns list"
+    },
+    {
+      "step_number": 3,
+      "type": "assert",
+      "action": "Verify '{{campaign_name}}' appears in the campaign list"
+    },
+    {
+      "step_number": 4,
+      "type": "step_module",
+      "action": "Run cleanup module",
+      "test_blueprint_module_id": 99
+    }
+  ]
+}
+```
+
+## Response
 
 <ResponseField name="message" type="string">
   A confirmation message (e.g. `"Test blueprint created successfully"`).
@@ -98,7 +371,11 @@ Create a new test blueprint with a title, starting URL, and a sequence of steps.
     </ResponseField>
 
     <ResponseField name="type" type="string">
-      The test type (`"integration"`).
+      The blueprint type (`"integration"` or `"module"`).
+    </ResponseField>
+
+    <ResponseField name="device_type" type="string">
+      The device type (`"browser"`, `"android"`, or `"ios"`).
     </ResponseField>
 
     <ResponseField name="starting_url" type="string">
@@ -111,6 +388,50 @@ Create a new test blueprint with a title, starting URL, and a sequence of steps.
 
     <ResponseField name="test_blueprint_category_id" type="integer">
       The test suite ID.
+    </ResponseField>
+
+    <ResponseField name="status" type="string">
+      The test status (`"active"` or `"paused"`).
+    </ResponseField>
+
+    <ResponseField name="browser_zoom" type="number">
+      The browser zoom level.
+    </ResponseField>
+
+    <ResponseField name="viewport_width" type="integer">
+      Browser viewport width.
+    </ResponseField>
+
+    <ResponseField name="viewport_height" type="integer">
+      Browser viewport height.
+    </ResponseField>
+
+    <ResponseField name="num_retries" type="integer">
+      Number of automatic retries on failure.
+    </ResponseField>
+
+    <ResponseField name="persist_self_healed" type="boolean">
+      Whether self-healed caches are persisted.
+    </ResponseField>
+
+    <ResponseField name="file_download_mode" type="string">
+      The file download handling mode.
+    </ResponseField>
+
+    <ResponseField name="variables" type="object[]">
+      Variables defined for this test.
+    </ResponseField>
+
+    <ResponseField name="setup_module" type="integer">
+      The setup module ID, if set.
+    </ResponseField>
+
+    <ResponseField name="teardown_module" type="integer">
+      The teardown module ID, if set.
+    </ResponseField>
+
+    <ResponseField name="folder_path" type="string">
+      The folder path of the test.
     </ResponseField>
 
     <ResponseField name="steps" type="object[]">
@@ -137,58 +458,70 @@ Create a new test blueprint with a title, starting URL, and a sequence of steps.
 {
   "message": "Test blueprint created successfully",
   "test_blueprint": {
-    "company_id": 2,
-    "created_at": "2025-07-03T01:45:55.486917+00:00",
-    "created_by": 4,
     "id": 181,
-    "starting_prompt": null,
+    "company_id": 2,
+    "title": "Login Flow",
+    "type": "integration",
+    "device_type": "browser",
+    "status": "active",
     "starting_url": "https://example.com/login",
+    "starting_prompt": null,
+    "test_blueprint_category_id": 12,
+    "browser_zoom": 1.0,
+    "viewport_width": 1440,
+    "viewport_height": 900,
+    "num_retries": 0,
+    "persist_self_healed": true,
+    "file_download_mode": "save_only",
+    "variables": null,
+    "setup_module": null,
+    "teardown_module": null,
+    "folder_path": "/",
+    "created_by": 4,
+    "created_at": "2025-07-03T01:45:55.486917+00:00",
+    "updated_at": "2025-07-03T01:45:55.486923+00:00",
     "steps": [
       {
-        "action": "Enter 'user@example.com' in the email field",
         "id": 564,
         "step_number": 1,
         "test_blueprint_id": 181,
         "type": "act",
-        "use_vision": false
+        "action": "Enter 'user@example.com' in the email field",
+        "use_vision": false,
+        "disable_self_healing": false,
+        "click_count": 1
       },
       {
-        "action": "Enter 'password123' in the password field",
         "id": 565,
         "step_number": 2,
         "test_blueprint_id": 181,
         "type": "act",
-        "use_vision": false
+        "action": "Enter 'password123' in the password field",
+        "use_vision": false,
+        "disable_self_healing": false,
+        "click_count": 1
       },
       {
-        "action": "Click the 'Log In' button",
         "id": 566,
         "step_number": 3,
         "test_blueprint_id": 181,
         "type": "act",
-        "use_vision": false
+        "action": "Click the 'Log In' button",
+        "use_vision": false,
+        "disable_self_healing": false,
+        "click_count": 1
       },
       {
-        "action": "Verify user is redirected to the dashboard page",
         "id": 567,
         "step_number": 4,
         "test_blueprint_id": 181,
         "type": "assert",
-        "use_vision": false
-      },
-      {
-        "action": "Verify the welcome message displays the user's name",
-        "id": 568,
-        "step_number": 5,
-        "test_blueprint_id": 181,
-        "type": "assert",
-        "use_vision": false
+        "action": "Verify user is redirected to the dashboard page",
+        "use_vision": false,
+        "disable_self_healing": false,
+        "click_count": 1
       }
-    ],
-    "test_blueprint_category_id": 4,
-    "title": "Login Flow",
-    "type": "integration",
-    "updated_at": "2025-07-03T01:45:55.486923+00:00"
+    ]
   }
 }
 ```
