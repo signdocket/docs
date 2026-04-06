@@ -3,22 +3,12 @@ title: "Create Module"
 api: "POST /modules/create"
 ---
 
-Create a reusable step module that can be shared across multiple tests. Modules support AI steps, assertion steps, and API steps.
+Create a reusable step module that can be shared across multiple tests. Modules support all step types including AI steps, assertions, API steps, recorded steps, and nested modules.
+
+## Request body
 
 <ParamField body="title" type="string" required>
-  The name of the module.
-</ParamField>
-
-<ParamField body="viewport_width" type="integer">
-  Browser viewport width in pixels. Defaults to `1900`.
-</ParamField>
-
-<ParamField body="viewport_height" type="integer">
-  Browser viewport height in pixels. Defaults to `1200`.
-</ParamField>
-
-<ParamField body="browser_zoom" type="number">
-  Browser zoom level. Defaults to `1`.
+  The name of the module. Must be between 1 and 128 characters and unique within your account.
 </ParamField>
 
 <ParamField body="steps" type="object[]" required>
@@ -26,19 +16,57 @@ Create a reusable step module that can be shared across multiple tests. Modules 
 
   <Expandable title="Step object properties">
     <ParamField body="step_number" type="integer" required>
-      The position of this step in the sequence (starting from 1).
+      The position of this step in the sequence (starting from 1). Must be unique within the module.
     </ParamField>
 
     <ParamField body="type" type="string" required>
-      The step type: `"act"` for actions, `"assert"` for assertions, or `"api"` for API requests.
+      The step type. Available types:
+
+      **AI steps:**
+      - `"act"` — an AI-driven browser action (e.g. click, type, navigate). Action text must not be empty.
+      - `"assert"` — an AI-driven assertion that verifies something on the page.
+
+      **Module & orchestration:**
+      - `"step_module"` — execute another module (nested). Requires `test_blueprint_module_id`.
+      - `"trigger_run"` — trigger another test as a sub-run. Requires `trigger_run_config`.
+
+      **API step:**
+      - `"api"` — make an HTTP request. Requires `api_request`.
+
+      **Recorded/low-level steps:**
+      - `"key"` — press a keyboard key.
+      - `"type"` — type text into the focused element.
+      - `"mouse_move"` — move the mouse to coordinates.
+      - `"left_click"` — left click at coordinates.
+      - `"left_click_drag"` — click and drag from one point to another.
+      - `"right_click"` — right click at coordinates.
+      - `"double_click"` — double click at coordinates.
+      - `"triple_click"` — triple click at coordinates.
+      - `"scroll"` — scroll the page.
+      - `"wait"` — wait for a duration.
+
+      **Mobile-only:**
+      - `"deeplink"` — open a deep link URL. Only supported when `device_type` is `"android"` or `"ios"`.
+
+      <Note>
+        The legacy `"module"` type is not allowed. Use `"step_module"` for nested modules.
+      </Note>
     </ParamField>
 
     <ParamField body="action" type="string" required>
-      A natural language instruction for `act` and `assert` steps. Leave empty for `api` steps.
+      A natural language instruction describing what the step should do. For recorded steps, this contains the coordinates or key data. For `api` steps, this can be left empty.
+    </ParamField>
+
+    <ParamField body="use_vision" type="boolean">
+      Whether to enable vision (screenshot analysis) for this step. Defaults to `false`.
+    </ParamField>
+
+    <ParamField body="test_blueprint_module_id" type="integer">
+      The ID of the module to execute. **Required** when `type` is `"step_module"`.
     </ParamField>
 
     <ParamField body="api_request" type="object">
-      Required for steps with `type: "api"`. Defines the HTTP request to make.
+      The HTTP request configuration. Required for steps with `type: "api"`.
 
       <Expandable title="API request properties">
         <ParamField body="url" type="string" required>
@@ -74,7 +102,68 @@ Create a reusable step module that can be shared across multiple tests. Modules 
         </ParamField>
       </Expandable>
     </ParamField>
+
+    <ParamField body="trigger_run_config" type="object">
+      Configuration for triggering another test. Required when `type` is `"trigger_run"`.
+
+      <Expandable title="Trigger run config properties">
+        <ParamField body="test_blueprint_id" type="integer" required>
+          The ID of the test blueprint to trigger as a sub-run.
+        </ParamField>
+      </Expandable>
+    </ParamField>
+
+    <ParamField body="assert_images_count" type="integer">
+      Number of screenshot images to capture for assertion steps. Defaults to `5`.
+    </ParamField>
+
+    <ParamField body="disable_self_healing" type="boolean">
+      Disable automatic self-healing for this step. Defaults to `false`.
+    </ParamField>
+
+    <ParamField body="click_count" type="integer">
+      Number of clicks to perform for click-type steps. Defaults to `1`.
+    </ParamField>
+
+    <ParamField body="hold_start_duration" type="number">
+      Duration in seconds to hold before the action. Defaults to `0`.
+    </ParamField>
+
+    <ParamField body="hold_end_duration" type="number">
+      Duration in seconds to hold after the action. Defaults to `0`.
+    </ParamField>
   </Expandable>
+</ParamField>
+
+<ParamField body="device_type" type="string">
+  The device to run the module on. Must be one of:
+  - `"browser"` — desktop browser (default)
+  - `"android"` — Android device
+  - `"ios"` — iOS device
+</ParamField>
+
+<ParamField body="device_name" type="string">
+  The specific device name to use for mobile testing (when `device_type` is `"android"` or `"ios"`).
+</ParamField>
+
+<ParamField body="viewport_width" type="integer">
+  Browser viewport width in pixels. Defaults to `1440`.
+</ParamField>
+
+<ParamField body="viewport_height" type="integer">
+  Browser viewport height in pixels. Defaults to `900`.
+</ParamField>
+
+<ParamField body="browser_zoom" type="number">
+  Browser zoom level. Must be between `0.75` and `2.0`. Defaults to `1.0`.
+</ParamField>
+
+<ParamField body="test_blueprint_category_id" type="integer">
+  The ID of the test suite this module belongs to.
+</ParamField>
+
+<ParamField body="folder_path" type="string">
+  The folder path for organizing the module. Defaults to `"/"`.
 </ParamField>
 
 ### Example request body
@@ -82,8 +171,8 @@ Create a reusable step module that can be shared across multiple tests. Modules 
 ```json
 {
   "title": "Login Setup Module",
-  "viewport_width": 1900,
-  "viewport_height": 1200,
+  "viewport_width": 1440,
+  "viewport_height": 900,
   "browser_zoom": 1,
   "steps": [
     {
@@ -96,7 +185,6 @@ Create a reusable step module that can be shared across multiple tests. Modules 
       "step_number": 2,
       "type": "api",
       "action": "",
-      "use_vision": false,
       "api_request": {
         "url": "https://api.example.com/auth/token",
         "method": "POST",
@@ -120,6 +208,8 @@ Create a reusable step module that can be shared across multiple tests. Modules 
   ]
 }
 ```
+
+## Response
 
 <ResponseField name="message" type="string">
   A confirmation message (e.g. `"Test blueprint created successfully"`).
@@ -145,8 +235,12 @@ Create a reusable step module that can be shared across multiple tests. Modules 
       The module status (e.g. `"active"`).
     </ResponseField>
 
-    <ResponseField name="steps" type="object[]">
-      The list of module steps with generated IDs.
+    <ResponseField name="device_type" type="string">
+      The device type (`"browser"`, `"android"`, or `"ios"`).
+    </ResponseField>
+
+    <ResponseField name="device_name" type="string">
+      The device name, if set.
     </ResponseField>
 
     <ResponseField name="company_id" type="integer">
@@ -165,8 +259,82 @@ Create a reusable step module that can be shared across multiple tests. Modules 
       Browser viewport height.
     </ResponseField>
 
+    <ResponseField name="test_blueprint_category_id" type="integer">
+      The test suite ID, if set.
+    </ResponseField>
+
+    <ResponseField name="folder_path" type="string">
+      The folder path of the module.
+    </ResponseField>
+
+    <ResponseField name="steps" type="object[]">
+      The list of module steps with generated IDs.
+
+      <Expandable title="Step response properties">
+        <ResponseField name="id" type="integer">
+          The unique step ID.
+        </ResponseField>
+
+        <ResponseField name="step_number" type="integer">
+          Position of this step in the sequence.
+        </ResponseField>
+
+        <ResponseField name="type" type="string">
+          The step type (see [step types](/api-reference/introduction#step-types) for all values).
+        </ResponseField>
+
+        <ResponseField name="action" type="string">
+          The step instruction.
+        </ResponseField>
+
+        <ResponseField name="use_vision" type="boolean">
+          Whether vision is enabled for this step.
+        </ResponseField>
+
+        <ResponseField name="test_blueprint_module_id" type="integer">
+          The referenced module ID (for `step_module` steps).
+        </ResponseField>
+
+        <ResponseField name="api_request" type="object">
+          The API request configuration (for `api` steps).
+        </ResponseField>
+
+        <ResponseField name="trigger_run_config" type="object">
+          The trigger run configuration (for `trigger_run` steps).
+        </ResponseField>
+
+        <ResponseField name="disable_self_healing" type="boolean">
+          Whether self-healing is disabled.
+        </ResponseField>
+
+        <ResponseField name="click_count" type="integer">
+          Number of clicks for this step.
+        </ResponseField>
+
+        <ResponseField name="hold_start_duration" type="number">
+          Hold duration before the action.
+        </ResponseField>
+
+        <ResponseField name="hold_end_duration" type="number">
+          Hold duration after the action.
+        </ResponseField>
+
+        <ResponseField name="assert_images_count" type="integer">
+          Number of assertion images captured.
+        </ResponseField>
+
+        <ResponseField name="attached_file_ids" type="integer[]">
+          IDs of files attached to this step.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+
     <ResponseField name="usage_count" type="integer">
-      Number of tests using this module.
+      Number of tests using this module (always `0` for newly created modules).
+    </ResponseField>
+
+    <ResponseField name="test_blueprints_using_module" type="object[]">
+      Tests referencing this module (empty for new modules).
     </ResponseField>
 
     <ResponseField name="created_at" type="string">
@@ -189,11 +357,16 @@ Create a reusable step module that can be shared across multiple tests. Modules 
     "title": "Login Setup Module",
     "type": "step_module",
     "status": "active",
+    "device_type": "browser",
+    "device_name": null,
     "company_id": 23,
     "browser_zoom": 1.0,
-    "viewport_width": 1900,
-    "viewport_height": 1200,
+    "viewport_width": 1440,
+    "viewport_height": 900,
+    "test_blueprint_category_id": null,
+    "folder_path": "/",
     "usage_count": 0,
+    "test_blueprints_using_module": [],
     "steps": [
       {
         "id": 23103,
@@ -201,7 +374,11 @@ Create a reusable step module that can be shared across multiple tests. Modules 
         "type": "act",
         "action": "Navigate to the login page",
         "use_vision": false,
-        "api_request": null
+        "test_blueprint_module_id": null,
+        "api_request": null,
+        "trigger_run_config": null,
+        "disable_self_healing": false,
+        "click_count": 1
       },
       {
         "id": 23104,
@@ -209,6 +386,7 @@ Create a reusable step module that can be shared across multiple tests. Modules 
         "type": "api",
         "action": "",
         "use_vision": false,
+        "test_blueprint_module_id": null,
         "api_request": {
           "url": "https://api.example.com/auth/token",
           "method": "POST",
@@ -218,7 +396,10 @@ Create a reusable step module that can be shared across multiple tests. Modules 
           "retries": 1,
           "backoff_seconds": 2.5,
           "should_refresh_page": false
-        }
+        },
+        "trigger_run_config": null,
+        "disable_self_healing": false,
+        "click_count": 1
       },
       {
         "id": 23105,
@@ -226,7 +407,11 @@ Create a reusable step module that can be shared across multiple tests. Modules 
         "type": "assert",
         "action": "Verify the auth token was returned",
         "use_vision": false,
-        "api_request": null
+        "test_blueprint_module_id": null,
+        "api_request": null,
+        "trigger_run_config": null,
+        "disable_self_healing": false,
+        "click_count": 1
       }
     ],
     "created_at": "2025-12-13T18:58:45.895773+00:00",

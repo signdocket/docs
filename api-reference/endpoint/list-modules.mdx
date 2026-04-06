@@ -3,14 +3,60 @@ title: "List Modules"
 api: "GET /modules/list"
 ---
 
-Retrieve modules in your account, with optional filtering by ID and step inclusion.
+Retrieve modules in your account, with optional filtering and step inclusion.
+
+## Query parameters
 
 <ParamField query="ids" type="string">
   Comma-separated list of module IDs to fetch. Omit to retrieve all modules.
 </ParamField>
 
 <ParamField query="with_steps" type="boolean">
-  Whether to include the full step details for each module. Defaults to `false`.
+  Whether to include the full step details (flattened, with nested modules expanded) for each module. Defaults to `false`.
+</ParamField>
+
+<ParamField query="viewport_width" type="integer">
+  Filter modules by viewport width.
+</ParamField>
+
+<ParamField query="viewport_height" type="integer">
+  Filter modules by viewport height.
+</ParamField>
+
+<ParamField query="browser_zoom" type="number">
+  Filter modules by browser zoom level.
+</ParamField>
+
+<ParamField query="test_blueprint_category_id" type="string">
+  Filter by test suite ID. Pass `"none"` to get modules with no suite.
+</ParamField>
+
+<ParamField query="folder_path" type="string">
+  Filter by folder path. Defaults to `"/"` (root folder).
+</ParamField>
+
+<ParamField query="include_all_folders" type="boolean">
+  If `true`, return modules from all folders. Defaults to `false`.
+</ParamField>
+
+<ParamField query="search" type="string">
+  Search modules by title (case-insensitive partial match).
+</ParamField>
+
+<ParamField query="page" type="integer">
+  Page number for pagination (1-indexed). Use with `per_page`.
+</ParamField>
+
+<ParamField query="per_page" type="integer">
+  Number of results per page. Enables pagination when set.
+</ParamField>
+
+<ParamField query="offset" type="integer">
+  Offset for pagination. Use with `limit` as an alternative to `page`/`per_page`.
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Maximum number of results. Use with `offset`.
 </ParamField>
 
 ### Example requests
@@ -26,6 +72,8 @@ Fetch specific modules with steps:
 ```bash
 GET /modules/list?ids=962,964&with_steps=true
 ```
+
+## Response
 
 <ResponseField name="modules" type="object[]">
   An array of module objects.
@@ -45,6 +93,14 @@ GET /modules/list?ids=962,964&with_steps=true
 
     <ResponseField name="status" type="string">
       The module status (e.g. `"active"`).
+    </ResponseField>
+
+    <ResponseField name="device_type" type="string">
+      The device type (`"browser"`, `"android"`, or `"ios"`).
+    </ResponseField>
+
+    <ResponseField name="device_name" type="string">
+      The device name, if set.
     </ResponseField>
 
     <ResponseField name="step_count" type="integer">
@@ -67,8 +123,62 @@ GET /modules/list?ids=962,964&with_steps=true
       Browser viewport height.
     </ResponseField>
 
+    <ResponseField name="test_blueprint_category_id" type="integer">
+      The test suite ID, if set.
+    </ResponseField>
+
+    <ResponseField name="test_blueprint_category_name" type="string">
+      The name of the test suite, if set.
+    </ResponseField>
+
+    <ResponseField name="folder_path" type="string">
+      The folder path of the module.
+    </ResponseField>
+
     <ResponseField name="test_steps" type="object[]">
-      The steps in the module. Only included when `with_steps=true`.
+      The steps in the module. Only included when `with_steps=true`. When included, nested `step_module` steps are flattened into their individual steps.
+
+      <Expandable title="Step properties">
+        <ResponseField name="id" type="integer">
+          The unique step ID.
+        </ResponseField>
+
+        <ResponseField name="step_number" type="integer">
+          Position of this step in the sequence.
+        </ResponseField>
+
+        <ResponseField name="type" type="string">
+          The step type (see [step types](/api-reference/introduction#step-types) for all values).
+        </ResponseField>
+
+        <ResponseField name="action" type="string">
+          The step instruction.
+        </ResponseField>
+
+        <ResponseField name="use_vision" type="boolean">
+          Whether vision is enabled for this step.
+        </ResponseField>
+
+        <ResponseField name="test_blueprint_module_id" type="integer">
+          The referenced module ID (for `step_module` steps).
+        </ResponseField>
+
+        <ResponseField name="api_request" type="object">
+          The API request configuration (for `api` steps).
+        </ResponseField>
+
+        <ResponseField name="trigger_run_config" type="object">
+          The trigger run configuration (for `trigger_run` steps).
+        </ResponseField>
+
+        <ResponseField name="disable_self_healing" type="boolean">
+          Whether self-healing is disabled.
+        </ResponseField>
+
+        <ResponseField name="click_count" type="integer">
+          Number of clicks for this step.
+        </ResponseField>
+      </Expandable>
     </ResponseField>
 
     <ResponseField name="usage_count" type="integer">
@@ -85,6 +195,32 @@ GET /modules/list?ids=962,964&with_steps=true
   </Expandable>
 </ResponseField>
 
+<ResponseField name="pagination" type="object">
+  Pagination metadata. Only included when using `page`/`per_page` or `offset`/`limit` parameters.
+
+  <Expandable title="Pagination properties">
+    <ResponseField name="page" type="integer">
+      The current page number.
+    </ResponseField>
+
+    <ResponseField name="per_page" type="integer">
+      Results per page.
+    </ResponseField>
+
+    <ResponseField name="total" type="integer">
+      Total number of matching results.
+    </ResponseField>
+
+    <ResponseField name="total_pages" type="integer">
+      Total number of pages.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="subfolders" type="string[]">
+  List of subfolder paths within the current folder. Not included when using `search`.
+</ResponseField>
+
 ### Example response
 
 ```json
@@ -95,11 +231,15 @@ GET /modules/list?ids=962,964&with_steps=true
       "title": "Login Setup",
       "type": "step_module",
       "status": "active",
+      "device_type": "browser",
+      "device_name": null,
       "step_count": 1,
       "company_id": 23,
       "browser_zoom": 1.0,
-      "viewport_width": 1900,
-      "viewport_height": 1200,
+      "viewport_width": 1440,
+      "viewport_height": 900,
+      "test_blueprint_category_id": null,
+      "folder_path": "/",
       "usage_count": 0,
       "test_steps": [
         {
@@ -107,7 +247,12 @@ GET /modules/list?ids=962,964&with_steps=true
           "step_number": 1,
           "type": "act",
           "action": "Navigate to the login page",
-          "use_vision": false
+          "use_vision": false,
+          "test_blueprint_module_id": null,
+          "api_request": null,
+          "trigger_run_config": null,
+          "disable_self_healing": false,
+          "click_count": 1
         }
       ],
       "created_at": "2025-12-13T18:53:37.588258+00:00",
@@ -118,11 +263,15 @@ GET /modules/list?ids=962,964&with_steps=true
       "title": "Auth Token Module",
       "type": "step_module",
       "status": "active",
+      "device_type": "browser",
+      "device_name": null,
       "step_count": 3,
       "company_id": 23,
       "browser_zoom": 1.0,
-      "viewport_width": 1900,
-      "viewport_height": 1200,
+      "viewport_width": 1440,
+      "viewport_height": 900,
+      "test_blueprint_category_id": null,
+      "folder_path": "/",
       "usage_count": 0,
       "test_steps": [
         {
@@ -130,7 +279,11 @@ GET /modules/list?ids=962,964&with_steps=true
           "step_number": 1,
           "type": "act",
           "action": "First AI step instructions",
-          "use_vision": false
+          "use_vision": false,
+          "test_blueprint_module_id": null,
+          "api_request": null,
+          "disable_self_healing": false,
+          "click_count": 1
         },
         {
           "id": 23104,
@@ -138,24 +291,32 @@ GET /modules/list?ids=962,964&with_steps=true
           "type": "api",
           "action": "",
           "use_vision": false,
+          "test_blueprint_module_id": null,
           "api_request": {
             "url": "https://api.example.com/auth",
             "method": "POST",
             "timeout": 60,
             "retries": 1
-          }
+          },
+          "disable_self_healing": false,
+          "click_count": 1
         },
         {
           "id": 23105,
           "step_number": 3,
           "type": "assert",
           "action": "Verify auth succeeded",
-          "use_vision": false
+          "use_vision": false,
+          "test_blueprint_module_id": null,
+          "api_request": null,
+          "disable_self_healing": false,
+          "click_count": 1
         }
       ],
       "created_at": "2025-12-13T18:58:45.895773+00:00",
       "updated_at": "2025-12-13T18:58:45.895781+00:00"
     }
-  ]
+  ],
+  "subfolders": ["/Auth Modules"]
 }
 ```

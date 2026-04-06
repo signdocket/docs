@@ -3,14 +3,153 @@ title: "Update Module"
 api: "PUT /modules/{module_id}"
 ---
 
-Update an existing module's title, browser settings, and steps. This replaces all existing steps with the new set provided.
+Update an existing module's title, browser settings, and steps. When steps are provided, all existing steps are replaced with the new set.
 
 <ParamField path="module_id" type="integer" required>
   The ID of the module to update.
 </ParamField>
 
+## Request body
+
+All fields are optional. Only provided fields will be updated.
+
 <ParamField body="title" type="string">
-  The updated module name.
+  The updated module name. Must be between 1 and 128 characters and unique within your account.
+</ParamField>
+
+<ParamField body="steps" type="object[]">
+  The new set of steps for the module. **Replaces all existing steps.**
+
+  <Expandable title="Step object properties">
+    <ParamField body="step_number" type="integer" required>
+      The position of this step in the sequence (starting from 1). Must be unique within the module.
+    </ParamField>
+
+    <ParamField body="type" type="string" required>
+      The step type. Available types:
+
+      **AI steps:**
+      - `"act"` — an AI-driven browser action (e.g. click, type, navigate). Action text must not be empty.
+      - `"assert"` — an AI-driven assertion that verifies something on the page.
+
+      **Module & orchestration:**
+      - `"step_module"` — execute another module (nested). Requires `test_blueprint_module_id`.
+      - `"trigger_run"` — trigger another test as a sub-run. Requires `trigger_run_config`.
+
+      **API step:**
+      - `"api"` — make an HTTP request. Requires `api_request`.
+
+      **Recorded/low-level steps:**
+      - `"key"` — press a keyboard key.
+      - `"type"` — type text into the focused element.
+      - `"mouse_move"` — move the mouse to coordinates.
+      - `"left_click"` — left click at coordinates.
+      - `"left_click_drag"` — click and drag from one point to another.
+      - `"right_click"` — right click at coordinates.
+      - `"double_click"` — double click at coordinates.
+      - `"triple_click"` — triple click at coordinates.
+      - `"scroll"` — scroll the page.
+      - `"wait"` — wait for a duration.
+
+      **Mobile-only:**
+      - `"deeplink"` — open a deep link URL. Only supported when `device_type` is `"android"` or `"ios"`.
+
+      <Note>
+        The legacy `"module"` type is not allowed. Use `"step_module"` for nested modules.
+      </Note>
+    </ParamField>
+
+    <ParamField body="action" type="string" required>
+      A natural language instruction describing what the step should do. For recorded steps, this contains the coordinates or key data. For `api` steps, this can be left empty.
+    </ParamField>
+
+    <ParamField body="use_vision" type="boolean">
+      Whether to enable vision (screenshot analysis) for this step. Defaults to `false`.
+    </ParamField>
+
+    <ParamField body="test_blueprint_module_id" type="integer">
+      The ID of the module to execute. **Required** when `type` is `"step_module"`.
+    </ParamField>
+
+    <ParamField body="api_request" type="object">
+      The HTTP request configuration. Required for steps with `type: "api"`.
+
+      <Expandable title="API request properties">
+        <ParamField body="url" type="string" required>
+          The full URL to send the request to.
+        </ParamField>
+
+        <ParamField body="method" type="string" required>
+          The HTTP method (e.g. `"GET"`, `"POST"`, `"PUT"`, `"DELETE"`).
+        </ParamField>
+
+        <ParamField body="headers" type="object">
+          Key-value pairs for request headers.
+        </ParamField>
+
+        <ParamField body="body" type="object">
+          The request body (for POST, PUT, PATCH requests).
+        </ParamField>
+
+        <ParamField body="timeout" type="integer">
+          Request timeout in seconds. Defaults to `60`.
+        </ParamField>
+
+        <ParamField body="retries" type="integer">
+          Number of retries on failure. Defaults to `1`.
+        </ParamField>
+
+        <ParamField body="backoff_seconds" type="number">
+          Delay between retries in seconds. Defaults to `2.5`.
+        </ParamField>
+
+        <ParamField body="should_refresh_page" type="boolean">
+          Whether to refresh the browser page after the API call. Defaults to `false`.
+        </ParamField>
+      </Expandable>
+    </ParamField>
+
+    <ParamField body="trigger_run_config" type="object">
+      Configuration for triggering another test. Required when `type` is `"trigger_run"`.
+
+      <Expandable title="Trigger run config properties">
+        <ParamField body="test_blueprint_id" type="integer" required>
+          The ID of the test blueprint to trigger as a sub-run.
+        </ParamField>
+      </Expandable>
+    </ParamField>
+
+    <ParamField body="assert_images_count" type="integer">
+      Number of screenshot images to capture for assertion steps. Defaults to `5`.
+    </ParamField>
+
+    <ParamField body="disable_self_healing" type="boolean">
+      Disable automatic self-healing for this step. Defaults to `false`.
+    </ParamField>
+
+    <ParamField body="click_count" type="integer">
+      Number of clicks to perform for click-type steps. Defaults to `1`.
+    </ParamField>
+
+    <ParamField body="hold_start_duration" type="number">
+      Duration in seconds to hold before the action. Defaults to `0`.
+    </ParamField>
+
+    <ParamField body="hold_end_duration" type="number">
+      Duration in seconds to hold after the action. Defaults to `0`.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="device_type" type="string">
+  The device to run the module on. Must be one of:
+  - `"browser"` — desktop browser
+  - `"android"` — Android device
+  - `"ios"` — iOS device
+</ParamField>
+
+<ParamField body="device_name" type="string">
+  The specific device name to use for mobile testing.
 </ParamField>
 
 <ParamField body="viewport_width" type="integer">
@@ -22,29 +161,15 @@ Update an existing module's title, browser settings, and steps. This replaces al
 </ParamField>
 
 <ParamField body="browser_zoom" type="number">
-  Browser zoom level.
+  Browser zoom level. Must be between `0.75` and `2.0`.
 </ParamField>
 
-<ParamField body="steps" type="object[]">
-  The new set of steps for the module. This replaces all existing steps.
+<ParamField body="test_blueprint_category_id" type="integer">
+  The ID of the test suite this module belongs to.
+</ParamField>
 
-  <Expandable title="Step object properties">
-    <ParamField body="step_number" type="integer" required>
-      The position of this step in the sequence (starting from 1).
-    </ParamField>
-
-    <ParamField body="type" type="string" required>
-      The step type: `"act"`, `"assert"`, or `"api"`.
-    </ParamField>
-
-    <ParamField body="action" type="string" required>
-      A natural language instruction for the step.
-    </ParamField>
-
-    <ParamField body="use_vision" type="boolean">
-      Whether to enable vision for this step. Defaults to `false`.
-    </ParamField>
-  </Expandable>
+<ParamField body="folder_path" type="string">
+  The folder path for organizing the module.
 </ParamField>
 
 ### Example request body
@@ -52,8 +177,8 @@ Update an existing module's title, browser settings, and steps. This replaces al
 ```json
 {
   "title": "Updated Login Module",
-  "viewport_width": 1900,
-  "viewport_height": 1200,
+  "viewport_width": 1440,
+  "viewport_height": 900,
   "browser_zoom": 1,
   "steps": [
     {
@@ -61,10 +186,18 @@ Update an existing module's title, browser settings, and steps. This replaces al
       "type": "act",
       "action": "Navigate to the updated login page",
       "use_vision": false
+    },
+    {
+      "step_number": 2,
+      "type": "step_module",
+      "action": "Run nested auth module",
+      "test_blueprint_module_id": 50
     }
   ]
 }
 ```
+
+## Response
 
 <ResponseField name="message" type="string">
   A confirmation message (e.g. `"Module updated successfully"`).
@@ -90,12 +223,12 @@ Update an existing module's title, browser settings, and steps. This replaces al
       The module status.
     </ResponseField>
 
-    <ResponseField name="test_steps" type="object[]">
-      The updated list of steps.
+    <ResponseField name="device_type" type="string">
+      The device type (`"browser"`, `"android"`, or `"ios"`).
     </ResponseField>
 
-    <ResponseField name="test_blueprints_using_module" type="object[]">
-      Tests referencing this module.
+    <ResponseField name="device_name" type="string">
+      The device name, if set.
     </ResponseField>
 
     <ResponseField name="company_id" type="integer">
@@ -112,6 +245,84 @@ Update an existing module's title, browser settings, and steps. This replaces al
 
     <ResponseField name="viewport_height" type="integer">
       Browser viewport height.
+    </ResponseField>
+
+    <ResponseField name="test_blueprint_category_id" type="integer">
+      The test suite ID, if set.
+    </ResponseField>
+
+    <ResponseField name="test_blueprint_category_name" type="string">
+      The name of the test suite, if set.
+    </ResponseField>
+
+    <ResponseField name="folder_path" type="string">
+      The folder path of the module.
+    </ResponseField>
+
+    <ResponseField name="test_steps" type="object[]">
+      The updated list of steps.
+
+      <Expandable title="Step response properties">
+        <ResponseField name="id" type="integer">
+          The unique step ID.
+        </ResponseField>
+
+        <ResponseField name="step_number" type="integer">
+          Position of this step in the sequence.
+        </ResponseField>
+
+        <ResponseField name="type" type="string">
+          The step type (see [step types](/api-reference/introduction#step-types) for all values).
+        </ResponseField>
+
+        <ResponseField name="action" type="string">
+          The step instruction.
+        </ResponseField>
+
+        <ResponseField name="use_vision" type="boolean">
+          Whether vision is enabled for this step.
+        </ResponseField>
+
+        <ResponseField name="test_blueprint_module_id" type="integer">
+          The referenced module ID (for `step_module` steps).
+        </ResponseField>
+
+        <ResponseField name="api_request" type="object">
+          The API request configuration (for `api` steps).
+        </ResponseField>
+
+        <ResponseField name="trigger_run_config" type="object">
+          The trigger run configuration (for `trigger_run` steps).
+        </ResponseField>
+
+        <ResponseField name="disable_self_healing" type="boolean">
+          Whether self-healing is disabled.
+        </ResponseField>
+
+        <ResponseField name="click_count" type="integer">
+          Number of clicks for this step.
+        </ResponseField>
+
+        <ResponseField name="hold_start_duration" type="number">
+          Hold duration before the action.
+        </ResponseField>
+
+        <ResponseField name="hold_end_duration" type="number">
+          Hold duration after the action.
+        </ResponseField>
+
+        <ResponseField name="assert_images_count" type="integer">
+          Number of assertion images captured.
+        </ResponseField>
+
+        <ResponseField name="attached_file_ids" type="integer[]">
+          IDs of files attached to this step.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+
+    <ResponseField name="test_blueprints_using_module" type="object[]">
+      Tests referencing this module.
     </ResponseField>
 
     <ResponseField name="usage_count" type="integer">
@@ -138,10 +349,14 @@ Update an existing module's title, browser settings, and steps. This replaces al
     "title": "Updated Login Module",
     "type": "step_module",
     "status": "active",
+    "device_type": "browser",
+    "device_name": null,
     "company_id": 23,
     "browser_zoom": 1.0,
-    "viewport_width": 1900,
-    "viewport_height": 1200,
+    "viewport_width": 1440,
+    "viewport_height": 900,
+    "test_blueprint_category_id": null,
+    "folder_path": "/",
     "usage_count": 0,
     "test_blueprints_using_module": [],
     "test_steps": [
@@ -151,7 +366,23 @@ Update an existing module's title, browser settings, and steps. This replaces al
         "type": "act",
         "action": "Navigate to the updated login page",
         "use_vision": false,
-        "api_request": null
+        "test_blueprint_module_id": null,
+        "api_request": null,
+        "trigger_run_config": null,
+        "disable_self_healing": false,
+        "click_count": 1
+      },
+      {
+        "id": 23109,
+        "step_number": 2,
+        "type": "step_module",
+        "action": "Run nested auth module",
+        "use_vision": false,
+        "test_blueprint_module_id": 50,
+        "api_request": null,
+        "trigger_run_config": null,
+        "disable_self_healing": false,
+        "click_count": 1
       }
     ],
     "created_at": "2025-12-13T18:56:48.692214+00:00",

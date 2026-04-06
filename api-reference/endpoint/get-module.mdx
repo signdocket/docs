@@ -3,11 +3,13 @@ title: "Get Module"
 api: "GET /modules/{module_id}"
 ---
 
-Retrieve a specific module by its ID, including all of its steps.
+Retrieve a specific module by its ID, including all of its steps and usage information.
 
 <ParamField path="module_id" type="integer" required>
   The ID of the module to retrieve.
 </ParamField>
+
+## Response
 
 <ResponseField name="module" type="object">
   The module object.
@@ -29,6 +31,14 @@ Retrieve a specific module by its ID, including all of its steps.
       The module status (e.g. `"active"`).
     </ResponseField>
 
+    <ResponseField name="device_type" type="string">
+      The device type (`"browser"`, `"android"`, or `"ios"`).
+    </ResponseField>
+
+    <ResponseField name="device_name" type="string">
+      The device name, if set.
+    </ResponseField>
+
     <ResponseField name="company_id" type="integer">
       Your company ID.
     </ResponseField>
@@ -45,6 +55,18 @@ Retrieve a specific module by its ID, including all of its steps.
       Browser viewport height.
     </ResponseField>
 
+    <ResponseField name="test_blueprint_category_id" type="integer">
+      The test suite ID, if set.
+    </ResponseField>
+
+    <ResponseField name="test_blueprint_category_name" type="string">
+      The name of the test suite, if set.
+    </ResponseField>
+
+    <ResponseField name="folder_path" type="string">
+      The folder path of the module.
+    </ResponseField>
+
     <ResponseField name="test_steps" type="object[]">
       The list of steps in this module.
 
@@ -58,7 +80,7 @@ Retrieve a specific module by its ID, including all of its steps.
         </ResponseField>
 
         <ResponseField name="type" type="string">
-          The step type: `"act"`, `"assert"`, or `"api"`.
+          The step type (see [step types](/api-reference/introduction#step-types) for all values).
         </ResponseField>
 
         <ResponseField name="action" type="string">
@@ -69,8 +91,40 @@ Retrieve a specific module by its ID, including all of its steps.
           Whether vision is enabled for this step.
         </ResponseField>
 
+        <ResponseField name="test_blueprint_module_id" type="integer">
+          The referenced module ID (for `step_module` steps).
+        </ResponseField>
+
         <ResponseField name="api_request" type="object">
-          The API request configuration (for `api` steps only).
+          The API request configuration (for `api` steps).
+        </ResponseField>
+
+        <ResponseField name="trigger_run_config" type="object">
+          The trigger run configuration (for `trigger_run` steps).
+        </ResponseField>
+
+        <ResponseField name="disable_self_healing" type="boolean">
+          Whether self-healing is disabled.
+        </ResponseField>
+
+        <ResponseField name="click_count" type="integer">
+          Number of clicks for this step.
+        </ResponseField>
+
+        <ResponseField name="hold_start_duration" type="number">
+          Hold duration before the action.
+        </ResponseField>
+
+        <ResponseField name="hold_end_duration" type="number">
+          Hold duration after the action.
+        </ResponseField>
+
+        <ResponseField name="assert_images_count" type="integer">
+          Number of assertion images captured.
+        </ResponseField>
+
+        <ResponseField name="attached_file_ids" type="integer[]">
+          IDs of files attached to this step.
         </ResponseField>
       </Expandable>
     </ResponseField>
@@ -102,10 +156,15 @@ Retrieve a specific module by its ID, including all of its steps.
     "title": "Login Setup",
     "type": "step_module",
     "status": "active",
+    "device_type": "browser",
+    "device_name": null,
     "company_id": 23,
     "browser_zoom": 1.0,
-    "viewport_width": 1900,
-    "viewport_height": 1200,
+    "viewport_width": 1440,
+    "viewport_height": 900,
+    "test_blueprint_category_id": null,
+    "test_blueprint_category_name": null,
+    "folder_path": "/",
     "usage_count": 0,
     "test_blueprints_using_module": [],
     "test_steps": [
@@ -115,7 +174,15 @@ Retrieve a specific module by its ID, including all of its steps.
         "type": "act",
         "action": "Navigate to the login page",
         "use_vision": false,
-        "api_request": null
+        "test_blueprint_module_id": null,
+        "api_request": null,
+        "trigger_run_config": null,
+        "disable_self_healing": false,
+        "click_count": 1,
+        "hold_start_duration": 0,
+        "hold_end_duration": 0,
+        "assert_images_count": 5,
+        "attached_file_ids": null
       }
     ],
     "created_at": "2025-12-13T18:53:37.588258+00:00",

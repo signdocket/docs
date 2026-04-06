@@ -25,6 +25,51 @@ curl -X GET https://api.docketqa.com/test_blueprint/list \
   Keep your API key secret. Do not expose it in client-side code or public repositories.
 </Warning>
 
+## Key concepts
+
+### Blueprint types
+
+Docket organizes tests using **blueprint types**:
+
+| Type | Value | Description |
+|------|-------|-------------|
+| **Integration** | `"integration"` | A standard end-to-end test with a sequence of steps. |
+| **Account (Module)** | `"module"` | A login/account module with stored credentials and a starting URL. |
+| **Step Module** | `"step_module"` | A reusable set of steps that can be embedded in other tests. Created via the [Modules API](/api-reference/endpoint/create-module). |
+
+### Step types
+
+Steps define the actions your test performs. Each step has a `type` that determines its behavior:
+
+| Type | Description |
+|------|-------------|
+| `"act"` | AI-driven browser action (click, type, navigate, etc.) |
+| `"assert"` | AI-driven assertion that verifies page state |
+| `"step_module"` | Execute a reusable module inline |
+| `"api"` | Make an HTTP request (GET, POST, PUT, DELETE) |
+| `"trigger_run"` | Trigger another test blueprint as a sub-run |
+| `"key"` | Press a keyboard key (recorded step) |
+| `"type"` | Type text into the focused element (recorded step) |
+| `"mouse_move"` | Move mouse to coordinates (recorded step) |
+| `"left_click"` | Left click at coordinates (recorded step) |
+| `"right_click"` | Right click at coordinates (recorded step) |
+| `"double_click"` | Double click at coordinates (recorded step) |
+| `"triple_click"` | Triple click at coordinates (recorded step) |
+| `"left_click_drag"` | Click and drag (recorded step) |
+| `"scroll"` | Scroll the page (recorded step) |
+| `"wait"` | Wait for a duration (recorded step) |
+| `"deeplink"` | Open a deep link URL (mobile only) |
+
+### Device types
+
+Tests can target different device types:
+
+| Device | Value | Description |
+|--------|-------|-------------|
+| **Desktop browser** | `"browser"` | Default. Runs in a remote Chromium browser. |
+| **Android** | `"android"` | Runs on an Android device/emulator. |
+| **iOS** | `"ios"` | Runs on an iOS device/simulator. |
+
 ## Endpoints
 
 <CardGroup cols={2}>

@@ -9,6 +9,8 @@ Retrieve the details and results of a specific test run. Use this to poll for re
   The ID of the test run to retrieve (returned from the [Run Test](/api-reference/endpoint/run-test) endpoint).
 </ParamField>
 
+## Response
+
 <ResponseField name="test_run" type="object">
   The test run object with full results.
 
@@ -18,7 +20,7 @@ Retrieve the details and results of a specific test run. Use this to poll for re
     </ResponseField>
 
     <ResponseField name="status" type="string">
-      The final status: `"running"`, `"passed"`, or `"failed"`.
+      The current status: `"running"`, `"passed"`, or `"failed"`.
     </ResponseField>
 
     <ResponseField name="test_blueprint_id" type="integer">
@@ -30,11 +32,11 @@ Retrieve the details and results of a specific test run. Use this to poll for re
     </ResponseField>
 
     <ResponseField name="blueprint_metadata" type="object">
-      A snapshot of the test blueprint at the time the run was triggered, including all steps.
+      A snapshot of the test blueprint at the time the run was triggered. Includes all blueprint fields (`title`, `type`, `device_type`, `starting_url`, `browser_zoom`, `viewport_width`, `viewport_height`, `variables`, etc.) and the full `steps` array with all step properties (see [step types](/api-reference/introduction#step-types)).
     </ResponseField>
 
     <ResponseField name="results" type="object[]">
-      Step-by-step results. Each entry includes:
+      Step-by-step results. `null` while the test is still running.
 
       <Expandable title="Result object properties">
         <ResponseField name="step_number" type="integer">
@@ -58,13 +60,43 @@ Retrieve the details and results of a specific test run. Use this to poll for re
         </ResponseField>
 
         <ResponseField name="actions" type="object[]">
-          Detailed browser actions taken during this step, each with a `description`, `type`, and optional `screenshot_url`.
+          Detailed browser actions taken during this step.
+
+          <Expandable title="Action properties">
+            <ResponseField name="description" type="string">
+              A human-readable description of the action.
+            </ResponseField>
+
+            <ResponseField name="type" type="string">
+              The action type (e.g. `"click_element"`, `"input_text"`, `"extract_content"`, `"scroll_down"`, etc.).
+            </ResponseField>
+
+            <ResponseField name="screenshot_url" type="string">
+              Pre-signed URL to a screenshot taken after this action.
+            </ResponseField>
+
+            <ResponseField name="screenshot_url_before" type="string">
+              Pre-signed URL to a screenshot taken before this action (when available).
+            </ResponseField>
+
+            <ResponseField name="api_response" type="object">
+              The API response data (for `api` type steps). May include `api_response_url` with a pre-signed URL to the full response body.
+            </ResponseField>
+          </Expandable>
         </ResponseField>
       </Expandable>
     </ResponseField>
 
     <ResponseField name="test_video_url" type="string">
-      A pre-signed URL to a video recording of the test execution.
+      A pre-signed URL to stream the video recording of the test execution.
+    </ResponseField>
+
+    <ResponseField name="test_video_download_url" type="string">
+      A pre-signed URL to download the video recording as a `.webm` file.
+    </ResponseField>
+
+    <ResponseField name="additional_attempts" type="object[]">
+      Results from retry attempts (when the test has `num_retries > 0` and the first attempt failed). Each attempt contains `results` and `test_video_url`.
     </ResponseField>
 
     <ResponseField name="created_at" type="string">
@@ -90,17 +122,24 @@ Retrieve the details and results of a specific test run. Use this to poll for re
       "id": 180,
       "title": "Login Flow",
       "type": "integration",
+      "device_type": "browser",
       "starting_url": "https://example.com/login",
+      "browser_zoom": 1.0,
+      "viewport_width": 1440,
+      "viewport_height": 900,
+      "variables": null,
       "steps": [
         {
           "action": "Enter 'user@example.com' in the email field",
           "step_number": 1,
-          "type": "act"
+          "type": "act",
+          "use_vision": false
         },
         {
           "action": "Enter 'password123' in the password field",
           "step_number": 2,
-          "type": "act"
+          "type": "act",
+          "use_vision": false
         }
       ]
     },
@@ -129,8 +168,14 @@ Retrieve the details and results of a specific test run. Use this to poll for re
       }
     ],
     "test_video_url": "https://...",
+    "test_video_download_url": "https://...",
+    "additional_attempts": [],
     "created_at": "2025-07-03T01:38:03.032648+00:00",
     "updated_at": "2025-07-03T01:40:05.043914+00:00"
   }
 }
 ```
+
+<Tip>
+  After triggering a run, use the `test_runs[].id` value to poll this endpoint until the status changes from `"running"` to `"passed"` or `"failed"`.
+</Tip>
