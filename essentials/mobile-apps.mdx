@@ -6,7 +6,7 @@ icon: "mobile-screen"
 
 ### Overview
 
-Docket supports testing native mobile applications for both **iOS** and **Android**. Alongside the web [remote screen](/essentials/remote-screen), each mobile test run can target a dedicated simulator (iOS) or emulator (Android).
+Docket supports writing dedicated test suites for your native **iOS** and **Android** apps, just like you would for a web app. Each mobile test runs against your app on a dedicated iOS simulator or Android emulator — the mobile counterpart to the web [remote screen](/essentials/remote-screen).
 
 ### Supported Devices
 
@@ -53,13 +53,11 @@ Docket installs your app onto a **simulator/emulator**, not a physical device.
 
 <Tabs>
   <Tab title="iOS">
-    iOS builds must be **simulator `.app` bundles** (zipped) — **not** an `.ipa`. Below are the common paths to a simulator `.app`. In every case, zip the resulting `.app` directory and upload that zip to Docket.
+    Upload a zipped **simulator `.app` bundle** — **not** an `.ipa`.
 
     #### Xcode
 
-    Open the project, choose the app target and any simulator device in the toolbar, then go to **Product → Scheme → Edit Scheme** and set the **Run** build configuration to **Release**. Then press `Cmd + B`.
-
-    The `.app` will be at:
+    Open the project, choose the app target and any simulator device in the toolbar, then go to **Product → Scheme → Edit Scheme** and set the **Run** build configuration to **Release**. Then press `Cmd + B`. The `.app` will be at:
 
     ```
     ~/Library/Developer/Xcode/DerivedData/<ProjectName>/Build/Products/Release-iphonesimulator/<AppName>.app
@@ -67,43 +65,47 @@ Docket installs your app onto a **simulator/emulator**, not a physical device.
 
     #### React Native
 
-    Run:
-
     ```bash
     npx react-native run-ios --mode Release
     ```
 
-    The `.app` will be at:
-
-    ```
-    ios/build/Build/Products/Release-iphonesimulator/<YourApp>.app
-    ```
+    The `.app` will be at `ios/build/Build/Products/Release-iphonesimulator/<YourApp>.app`.
 
     #### Flutter
-
-    Run:
 
     ```bash
     flutter build ios --simulator
     ```
 
-    If the project uses flavors:
-
-    ```bash
-    flutter build ios --simulator --flavor <flavorName>
-    ```
-
-    The `.app` will be at:
-
-    ```
-    build/ios/iphonesimulator/Runner.app
-    ```
-
-    #### Expo (React Native)
-
-    Create a simulator build with EAS, download the result, extract it, and upload the zipped `.app`.
+    Add `--flavor <flavorName>` if your project uses flavors. The `.app` will be at `build/ios/iphonesimulator/Runner.app`.
   </Tab>
   <Tab title="Android">
-    Android builds should be a standard `.apk` (or `.xapk` / `.apks` / `.apkm`) that includes 64-bit ARM (`arm64-v8a`) libraries. Builds downloaded from Google Play include `arm64` by default; 32-bit-only APKs will be rejected at upload time.
+    Upload a `.apk` (or `.xapk` / `.apks` / `.apkm`) that includes `arm64-v8a` libraries. 32-bit-only APKs are rejected at upload.
+
+    #### Android Studio
+
+    Choose **Build → Build Bundle(s) / APK(s) → Build APK(s)**, or from the terminal:
+
+    ```bash
+    ./gradlew assembleRelease
+    ```
+
+    The `.apk` will be at `app/build/outputs/apk/release/app-release.apk`.
+
+    #### React Native
+
+    ```bash
+    cd android && ./gradlew assembleRelease
+    ```
+
+    The `.apk` will be at `android/app/build/outputs/apk/release/app-release.apk`.
+
+    #### Flutter
+
+    ```bash
+    flutter build apk --release
+    ```
+
+    Add `--flavor <flavorName>` if your project uses flavors. The `.apk` will be at `build/app/outputs/flutter-apk/app-release.apk`.
   </Tab>
 </Tabs>
