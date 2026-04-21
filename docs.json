@@ -31,7 +31,8 @@
         "pages": [
           "essentials/test-suite",
           "essentials/test-creation",
-          "essentials/remote-browser",
+          "essentials/remote-screen",
+          "essentials/mobile-apps",
           "essentials/folders",
           "essentials/ai-steps",
           "essentials/recorded-steps",

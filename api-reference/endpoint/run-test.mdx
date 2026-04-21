@@ -3,7 +3,7 @@ title: "Run Test"
 api: "POST /test_group_run/trigger_run"
 ---
 
-Trigger a test run for one or more test blueprints. Each test runs in its own remote browser session.
+Trigger a test run for one or more test blueprints. Each test runs in its own remote screen session (browser or mobile device).
 
 <ParamField body="test_blueprint_ids" type="integer[]" required>
   An array of test blueprint IDs to run. You can trigger multiple tests in a single request.
