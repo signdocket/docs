@@ -20,11 +20,13 @@ To get started with writing a test on Docket, you should:
 
 The URL you provide will be where the Docket Browser agent automatically navigates to begin executing your test.
 
-> **Learn more**: For detailed information about the persistent browser instance and its controls, see the [Remote Browser](/essentials/remote-browser) documentation.
+> **Learn more**: For detailed information about the persistent browser/device instance and its controls, see the [Remote Screen](/essentials/remote-screen) documentation.
+
+> **Testing a native mobile app?** Instead of an entrypoint URL, mobile tests target a [mobile app](/essentials/mobile-apps) on a simulator or emulator. See the [Mobile Apps](/essentials/mobile-apps) guide for supported devices and build requirements.
 
 ### Building Your Test
 
-To create tests on Docket, you can simply interact in the [remote browser](/essentials/remote-browser) and Docket will record actions alongside English annotations automatically. 
+To create tests on Docket, you can simply interact in the [remote screen](/essentials/remote-screen) and Docket will record actions alongside English annotations automatically. 
 
 There are five types of steps you can write on Docket:
 1. **[Recorded Steps](/essentials/recorded-steps)** - Precise coordinate-based actions that replay exactly as recorded and self-heal when the UI changes
@@ -89,7 +91,7 @@ Modules are reusable collections of steps that can be created once and inserted 
 - **Create and manage** modules in the "Modules" section of Docket
 - **Compose with any step type**: Modules can contain AI steps, recorded steps, and API steps
 - **Cannot nest**: Modules cannot reference other modules
-- **CRUD interface**: The module creation interface is similar to test creation, with a [remote browser](/essentials/remote-browser) for recording interactions
+- **CRUD interface**: The module creation interface is similar to test creation, with a [remote screen](/essentials/remote-screen) for recording interactions
 
 ##### Variables in Modules
 

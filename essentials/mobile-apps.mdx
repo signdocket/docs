@@ -1,0 +1,109 @@
+---
+title: "Mobile Apps"
+description: "Testing native iOS and Android applications with Docket"
+icon: "mobile-screen"
+---
+
+### Overview
+
+Docket supports testing native mobile applications for both **iOS** and **Android**. Alongside the web [remote screen](/essentials/remote-screen), each mobile test run can target a dedicated simulator (iOS) or emulator (Android).
+
+### Supported Devices
+
+When configuring a mobile test, you pick a device profile. Docket provisions a fresh simulator/emulator matching that profile for each run.
+
+<Columns cols={2}>
+  <div>
+    **iOS simulators**
+    - iPhone 17 Pro
+    - iPhone 16e
+    - iPad Pro 13"
+  </div>
+  <div>
+    **Android emulators**
+    - Pixel 9
+    - Pixel 9 Pro XL
+    - Pixel 9 Pro Fold
+    - Pixel Tablet
+    - Galaxy S23
+  </div>
+</Columns>
+
+### Apps and Builds
+
+A mobile app in Docket is a long-lived container for every build you ship. Tests always run against the app's **active build**, which Docket installs onto the simulator before each run — so you never need to edit your tests after bumping a version.
+
+- **Create an app**: choose a name and platform (`ios` or `android`) and upload your first build.
+- **Add builds over time**: each build has its own name (typically a version or commit SHA) and binary.
+- **Switch the active build**: promote any build to active to run your existing tests against it — useful for release candidates or reproducing regressions on older versions. Deleting the active build auto-promotes the next most recent one.
+
+### Device Settings
+
+Mobile tests expose a **Device Settings** tab inside Advanced Settings for configuring the simulator/emulator environment before the run starts. This tab only appears for mobile tests.
+
+![Device Settings](/images/Screenshot_2026-04-21_at_12.55.09_PM.png)
+
+- **Latitude / Longitude** (iOS and Android): override the device's GPS location so location-aware flows resolve to a specific place.
+- **Timezone** (iOS and Android): set the simulator/emulator's timezone, useful for testing time-of-day, scheduling, and region-specific behavior.
+- **Orientation** (Android only): switch the emulator between **portrait** and **landscape**.
+
+### Build Requirements
+
+Docket installs your app onto a **simulator/emulator**, not a physical device.
+
+<Tabs>
+  <Tab title="iOS">
+    iOS builds must be **simulator `.app` bundles** (zipped) — **not** an `.ipa`. Below are the common paths to a simulator `.app`. In every case, zip the resulting `.app` directory and upload that zip to Docket.
+
+    #### Xcode
+
+    Open the project, choose the app target and any simulator device in the toolbar, then go to **Product → Scheme → Edit Scheme** and set the **Run** build configuration to **Release**. Then press `Cmd + B`.
+
+    The `.app` will be at:
+
+    ```
+    ~/Library/Developer/Xcode/DerivedData/<ProjectName>/Build/Products/Release-iphonesimulator/<AppName>.app
+    ```
+
+    #### React Native
+
+    Run:
+
+    ```bash
+    npx react-native run-ios --mode Release
+    ```
+
+    The `.app` will be at:
+
+    ```
+    ios/build/Build/Products/Release-iphonesimulator/<YourApp>.app
+    ```
+
+    #### Flutter
+
+    Run:
+
+    ```bash
+    flutter build ios --simulator
+    ```
+
+    If the project uses flavors:
+
+    ```bash
+    flutter build ios --simulator --flavor <flavorName>
+    ```
+
+    The `.app` will be at:
+
+    ```
+    build/ios/iphonesimulator/Runner.app
+    ```
+
+    #### Expo (React Native)
+
+    Create a simulator build with EAS, download the result, extract it, and upload the zipped `.app`.
+  </Tab>
+  <Tab title="Android">
+    Android builds should be a standard `.apk` (or `.xapk` / `.apks` / `.apkm`) that includes 64-bit ARM (`arm64-v8a`) libraries. Builds downloaded from Google Play include `arm64` by default; 32-bit-only APKs will be rejected at upload time.
+  </Tab>
+</Tabs>

@@ -1,0 +1,61 @@
+---
+title: "Remote Screen"
+description: "Understanding Docket's persistent browser and device instances"
+icon: "display"
+---
+
+### Overview
+
+Docket launches a single persistent **remote screen** that stays active as you create and edit tests. For web tests this is a browser; for [mobile tests](/essentials/mobile-apps) it's an iOS simulator or Android emulator. In both cases the screen is embedded in the side panel and automatically stays in sync with your current test configuration.
+
+When building a test, pick the screen type from the dropdown — **browser** for web, or a **device** for mobile.
+
+![Remote Screen Type Selector](/images/Screenshot_2026-04-21_at_1.03.32_PM.png)
+
+**Key behaviors:**
+- **Single active tab**: The screen can only be used in one tab at a time. If you open Docket in multiple tabs, only one will have access; others will show the screen as "busy"
+- **Persistent session**: The screen stays active as long as you continue creating or editing tests, maintaining your session state
+- **Auto-sync**: Changes to test configuration (variables, files, and logged-in user session) are automatically synced. A resync is only needed when changing viewport/device settings, zoom level, or when the underlying instance needs to be restarted. For web tests, changing the entrypoint URL will prompt you with an option to navigate to the new URL
+
+### Controls
+
+When the screen is launched and you're viewing a test, you'll see several control options in the bottom bar:
+
+![Remote Screen Controls](/images/Screenshot_2025-11-20_at_1.23.03_PM.png)
+
+#### Status Badge
+Shows the current state of the instance. The screen cycles through several states:
+
+- **Offline**: Not started
+- **Starting**: Instance is starting up
+- **Online**: Ready for execution or recording
+- **Recording**: Ready for interaction. All events are captured and created in the step recorder. Cannot execute steps while recording
+- **Executing**: Playing back steps. Cannot record during execution
+- **Stopping**: Instance was stopped and will go offline
+
+#### Self Heal Toggle
+Controls how [recorded steps](/essentials/recorded-steps) replay during test execution.
+
+- **Enabled** (default): Before replaying each recorded step, Docket performs a check to see if the element is still available at the saved coordinates. If the check passes, the step executes normally. If the element has moved or is unavailable, the agent self-heals by locating it using the step description and action
+- **Disabled**: The agent will directly replay from the exact saved coordinates without performing any checks or attempting to adapt
+
+#### Run from Step
+Executes your test starting from the currently selected step (highlighted in blue) and continues through subsequent steps in sequence. The execution respects the Self Heal toggle setting.
+
+#### Start Recording
+Enables recording mode where you can interact with the embedded screen and Docket will automatically capture and cache your actions. This is the primary way to create [recorded steps](/essentials/recorded-steps).
+
+#### Resync
+Opens a resync dialog.
+
+For web tests:
+- **Navigate to URL**: Navigates the browser to the test's entrypoint URL
+- **Restart browser**: Restarts the browser and applies hard-sync settings like viewport size, zoom level, etc.
+
+For mobile tests:
+- **Restart app**: Relaunches the [active build](/essentials/mobile-apps#apps-and-builds) on the simulator/emulator. The app itself is not reinstalled and the device is not restarted.
+
+Most configuration changes (variables, files, and logged-in user session) auto-sync and don't require a resync.
+
+#### Stop
+Terminates the instance. You'll need to launch a new one when you want to continue creating or editing tests.
