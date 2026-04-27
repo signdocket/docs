@@ -1,0 +1,46 @@
+---
+title: "Create Build"
+api: "POST /apps/{id}/builds"
+---
+
+Add a new build to an existing app. By default the new build is promoted to active; pass `set_as_current: false` to leave the active build unchanged.
+
+Call [POST /apps/upload-url](/api-reference/endpoint/upload-build) first to obtain an `s3_key`.
+
+## Path parameters
+
+<ParamField path="id" type="integer" required>App ID.</ParamField>
+
+## Request body
+
+<Note>
+  The build name field is `name` on this endpoint. (When creating an app's *first* build via [POST /apps/create](/api-reference/endpoint/create-app) the equivalent field is `build_name`.)
+</Note>
+
+<ParamField body="name" type="string" required>Unique within the app. Max 255 chars.</ParamField>
+<ParamField body="s3_key" type="string" required>From [POST /apps/upload-url](/api-reference/endpoint/upload-build). Must belong to your company.</ParamField>
+<ParamField body="file_size" type="integer" required>Bytes uploaded.</ParamField>
+<ParamField body="original_filename" type="string">Used to preserve the file extension.</ParamField>
+<ParamField body="set_as_current" type="boolean">Default `true`. Set `false` to upload a build without affecting running tests; promote it later with [Set Active Build](/api-reference/endpoint/set-current-build).</ParamField>
+
+```json
+{
+  "name": "v1.2.0",
+  "s3_key": "files/2/9c2e7f5a-..._acme.apk",
+  "file_size": 92012544,
+  "original_filename": "acme.apk"
+}
+```
+
+## Response
+
+Returns `{ message, build, app }`. `app.current_build` reflects the new active build when `set_as_current` is `true`. `build.arch` is `"arm64"` / `"x86_64"` / `"universal"` for Android (auto-detected from the binary) and `null` for iOS.
+
+## Errors
+
+| Status | Cause |
+|--------|-------|
+| `400`  | Missing/invalid field, bad extension, or 32-bit-only Android binary. |
+| `403`  | No mobile concurrency on plan, or `s3_key` not owned by your company. |
+| `404`  | App not found in your account. |
+| `409`  | A build named `name` already exists for this app. |

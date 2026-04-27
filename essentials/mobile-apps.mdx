@@ -37,6 +37,10 @@ A mobile app in Docket is a long-lived container for every build you ship. Tests
 - **Add builds over time**: each build has its own name (typically a version or commit SHA) and binary.
 - **Switch the active build**: promote any build to active to run your existing tests against it — useful for release candidates or reproducing regressions on older versions. Deleting the active build auto-promotes the next most recent one.
 
+<Tip>
+  All of the above can be driven from CI with your API key — see [Upload a Build](/api-reference/endpoint/upload-build) for the upload flow and [Set Active Build](/api-reference/endpoint/set-current-build) for promoting a version after a release.
+</Tip>
+
 ### Device Settings
 
 Mobile tests expose a **Device Settings** tab inside Advanced Settings for configuring the simulator/emulator environment before the run starts. This tab only appears for mobile tests.

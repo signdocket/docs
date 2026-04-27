@@ -1,0 +1,31 @@
+---
+title: "Upload a Build"
+api: "POST /apps/upload-url"
+---
+
+Get a 15-minute presigned URL for uploading a build binary. `PUT` the binary to `s3_presigned_url`, then pass the returned `s3_key` to [Create App](/api-reference/endpoint/create-app) or [Create Build](/api-reference/endpoint/create-build).
+
+Files are capped at **1 GB**.
+
+## Request body
+
+<ParamField body="filename" type="string" required>Original filename. Extension must match the platform.</ParamField>
+<ParamField body="platform" type="string" required>`"android"` or `"ios"`.</ParamField>
+<ParamField body="file_size" type="integer" required>Size in bytes. Must be `> 0` and `≤ 1073741824`.</ParamField>
+<ParamField body="content_type" type="string">Defaults to `"application/octet-stream"`. Must match the `Content-Type` header you send on the S3 `PUT`.</ParamField>
+
+| Platform  | Allowed extensions |
+|-----------|--------------------|
+| `android` | `.apk`, `.xapk`, `.apks`, `.apkm` |
+| `ios`     | `.zip` (zipped simulator `.app` bundle, **not** `.ipa`) |
+
+## Response
+
+```json
+{
+  "s3_presigned_url": "https://docket-blobs.s3.amazonaws.com/files/2/...&X-Amz-Signature=...",
+  "s3_key": "files/2/4f8e1c2a-..._acme.apk",
+  "content_type": "application/vnd.android.package-archive",
+  "filename": "acme.apk"
+}
+```
