@@ -1,0 +1,20 @@
+---
+title: "Set Active Build"
+api: "PUT /apps/{id}/builds/{build_id}/set-current"
+---
+
+Promote an existing build to be the app's active build.
+
+## Path parameters
+
+<ParamField path="id" type="integer" required>App ID.</ParamField>
+<ParamField path="build_id" type="integer" required>The build to promote. Must belong to the app.</ParamField>
+
+No request body.
+
+```bash
+curl -X PUT https://api.docketqa.com/apps/17/builds/47/set-current \
+  -H "X-API-KEY: your-api-key"
+```
+
+Returns `{ message, app }` with `app.current_build` set to the promoted build. `404` if the app or build is not in your account.

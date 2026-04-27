@@ -1,0 +1,55 @@
+---
+title: "Create App"
+api: "POST /apps/create"
+---
+
+Register a new mobile app with its first build. The first build becomes the active build.
+
+Call [POST /apps/upload-url](/api-reference/endpoint/upload-build) first to obtain an `s3_key`.
+
+## Request body
+
+<ParamField body="name" type="string" required>Unique per platform. Max 255 chars.</ParamField>
+<ParamField body="platform" type="string" required>`"android"` or `"ios"`.</ParamField>
+<ParamField body="build_name" type="string" required>Name for the first build (e.g. version or commit SHA). Max 255 chars.</ParamField>
+<ParamField body="s3_key" type="string" required>From [POST /apps/upload-url](/api-reference/endpoint/upload-build). Must belong to your company.</ParamField>
+<ParamField body="file_size" type="integer" required>Bytes uploaded.</ParamField>
+<ParamField body="original_filename" type="string">Used to preserve the file extension in the stored object name.</ParamField>
+
+```json
+{
+  "name": "Acme Mobile",
+  "platform": "android",
+  "build_name": "v1.0.0",
+  "s3_key": "files/2/4f8e1c2a-..._acme.apk",
+  "file_size": 84213120,
+  "original_filename": "acme.apk"
+}
+```
+
+## Response
+
+Returns `{ message, app }` where `app` includes `id`, `name`, `platform`, `current_build` (with `id`, `name`, `arch`, `file`), `build_count`, `created_at`, `updated_at`.
+
+`arch` is auto-detected for Android builds (`"arm64"`, `"x86_64"`, `"universal"`) and is always `null` for iOS.
+
+```json
+{
+  "message": "App created successfully",
+  "app": {
+    "id": 17, "name": "Acme Mobile", "platform": "android", "build_count": 1,
+    "current_build": {
+      "id": 42, "name": "v1.0.0", "arch": "arm64",
+      "file": { "id": 312, "file_name": "Acme_Mobile_android_20260427_140312.apk", "file_size": 84213120 }
+    }
+  }
+}
+```
+
+## Errors
+
+| Status | Cause |
+|--------|-------|
+| `400`  | Missing/invalid field, bad extension, or 32-bit-only Android binary. |
+| `403`  | No mobile concurrency on plan, or `s3_key` not owned by your company. |
+| `409`  | An app with the same `name` already exists for this `platform`. |

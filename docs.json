@@ -91,6 +91,16 @@
               "api-reference/endpoint/list-modules",
               "api-reference/endpoint/update-module"
             ]
+          },
+          {
+            "group": "Mobile Apps",
+            "pages": [
+              "api-reference/endpoint/upload-build",
+              "api-reference/endpoint/create-app",
+              "api-reference/endpoint/list-apps",
+              "api-reference/endpoint/create-build",
+              "api-reference/endpoint/set-current-build"
+            ]
           }
         ]
       }

@@ -1,0 +1,42 @@
+---
+title: "List Apps"
+api: "GET /apps/list"
+---
+
+List every mobile app in your company, each with its current active build inlined.
+
+## Query parameters
+
+<ParamField query="platform" type="string">`"android"` or `"ios"`. Omit for both.</ParamField>
+
+## Response
+
+Returns `{ apps }`, ordered by `created_at` descending. Each app has `id`, `name`, `platform`, `build_count`, `current_build` (or `null`), `created_at`, `updated_at`.
+
+```json
+{
+  "apps": [
+    {
+      "id": 17, "name": "Acme Mobile", "platform": "android", "build_count": 3,
+      "current_build": {
+        "id": 51, "name": "v1.2.0", "arch": "arm64",
+        "file": { "file_name": "Acme_Mobile_android_20260427_180501.apk", "file_size": 92012544 }
+      }
+    }
+  ]
+}
+```
+
+---
+
+## Get a single app
+
+```http
+GET /apps/{id}
+```
+
+Same shape as a list entry plus an inline `builds` array containing **every** build for the app — useful when you need the full version history.
+
+```bash
+curl https://api.docketqa.com/apps/17 -H "X-API-KEY: your-api-key"
+```
