@@ -35,7 +35,7 @@ Docket organizes tests using **blueprint types**:
 |------|-------|-------------|
 | **Integration** | `"integration"` | A standard end-to-end test with a sequence of steps. |
 | **Account (Module)** | `"module"` | A login/account module with stored credentials and a starting URL. |
-| **Step Module** | `"step_module"` | A reusable set of steps that can be embedded in other tests. Created via the [Modules API](/api-reference/endpoint/create-module). |
+| **Module** | `"step_module"` | A reusable set of steps that can be embedded in other tests. Created via the [Modules API](/api-reference/endpoint/create-module). |
 
 ### Step types
 
@@ -70,6 +70,8 @@ Tests can target different device types:
 | **Android** | `"android"` | Runs on an Android device/emulator. |
 | **iOS** | `"ios"` | Runs on an iOS device/simulator. |
 
+Modules are device-agnostic — a single module can be referenced from a browser test at one viewport and from a mobile test on a phone. The runtime selects the right internal cache per execution config, so each combination of device / viewport / zoom stays sharp on its own.
+
 ## Endpoints
 
 <CardGroup cols={2}>
@@ -86,7 +88,7 @@ Tests can target different device types:
     List all test blueprints in your account
   </Card>
   <Card title="Create Module" icon="cube-plus" href="/api-reference/endpoint/create-module">
-    Create a reusable step module
+    Create a reusable module
   </Card>
   <Card title="Get Module" icon="cube" href="/api-reference/endpoint/get-module">
     Retrieve a specific module by ID

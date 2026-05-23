@@ -52,7 +52,7 @@ All fields are optional. Only provided fields will be updated.
       - `"wait"` — wait for a duration.
 
       **Mobile-only:**
-      - `"deeplink"` — open a deep link URL. Only supported when `device_type` is `"android"` or `"ios"`.
+      - `"deeplink"` — open a deep link URL. Only executed when the module runs on an iOS or Android worker; ignored on browser workers.
 
       <Note>
         The legacy `"module"` type is not allowed. Use `"step_module"` for nested modules.
@@ -141,29 +141,6 @@ All fields are optional. Only provided fields will be updated.
   </Expandable>
 </ParamField>
 
-<ParamField body="device_type" type="string">
-  The device to run the module on. Must be one of:
-  - `"browser"` — desktop browser
-  - `"android"` — Android device
-  - `"ios"` — iOS device
-</ParamField>
-
-<ParamField body="device_name" type="string">
-  The specific device name to use for mobile testing.
-</ParamField>
-
-<ParamField body="viewport_width" type="integer">
-  Browser viewport width in pixels.
-</ParamField>
-
-<ParamField body="viewport_height" type="integer">
-  Browser viewport height in pixels.
-</ParamField>
-
-<ParamField body="browser_zoom" type="number">
-  Browser zoom level. Must be between `0.75` and `2.0`.
-</ParamField>
-
 <ParamField body="test_blueprint_category_id" type="integer">
   The ID of the test suite this module belongs to.
 </ParamField>
@@ -177,9 +154,6 @@ All fields are optional. Only provided fields will be updated.
 ```json
 {
   "title": "Updated Login Module",
-  "viewport_width": 1440,
-  "viewport_height": 900,
-  "browser_zoom": 1,
   "steps": [
     {
       "step_number": 1,
@@ -223,28 +197,8 @@ All fields are optional. Only provided fields will be updated.
       The module status.
     </ResponseField>
 
-    <ResponseField name="device_type" type="string">
-      The device type (`"browser"`, `"android"`, or `"ios"`).
-    </ResponseField>
-
-    <ResponseField name="device_name" type="string">
-      The device name, if set.
-    </ResponseField>
-
     <ResponseField name="company_id" type="integer">
       Your company ID.
-    </ResponseField>
-
-    <ResponseField name="browser_zoom" type="number">
-      The browser zoom level.
-    </ResponseField>
-
-    <ResponseField name="viewport_width" type="integer">
-      Browser viewport width.
-    </ResponseField>
-
-    <ResponseField name="viewport_height" type="integer">
-      Browser viewport height.
     </ResponseField>
 
     <ResponseField name="test_blueprint_category_id" type="integer">
@@ -349,12 +303,7 @@ All fields are optional. Only provided fields will be updated.
     "title": "Updated Login Module",
     "type": "step_module",
     "status": "active",
-    "device_type": "browser",
-    "device_name": null,
     "company_id": 23,
-    "browser_zoom": 1.0,
-    "viewport_width": 1440,
-    "viewport_height": 900,
     "test_blueprint_category_id": null,
     "folder_path": "/",
     "usage_count": 0,

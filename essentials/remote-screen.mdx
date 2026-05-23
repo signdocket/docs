@@ -8,14 +8,16 @@ icon: "display"
 
 Docket launches a single persistent **remote screen** that stays active as you create and edit tests. For web tests this is a browser; for [mobile tests](/essentials/mobile-apps) it's an iOS simulator or Android emulator. In both cases the screen is embedded in the side panel and automatically stays in sync with your current test configuration.
 
-When building a test, pick the screen type from the dropdown — **browser** for web, or a **device** for mobile.
+### Start Screen launcher
 
-![Remote Screen Type Selector](/images/Screenshot_2026-04-21_at_1.03.32_PM.png)
+**Start Screen** is a split button: the main half launches with the displayed device; the caret opens a picker grouped by **Browser** / **iOS** / **Android**, with per-resolution entries and inline app selection on mobile. The default mirrors the test you're viewing, so the typical flow is: open a test → click Start Screen.
+
+![Start Screen launcher with the iOS tab open, iPhone 17 Pro selected, and iOS Alpha picked as the app](/images/Screenshot_2026-05-23_at_9.31.21_AM.png)
 
 **Key behaviors:**
-- **Single active tab**: The screen can only be used in one tab at a time. If you open Docket in multiple tabs, only one will have access; others will show the screen as "busy"
-- **Persistent session**: The screen stays active as long as you continue creating or editing tests, maintaining your session state
-- **Auto-sync**: Changes to test configuration (variables, files, and logged-in user session) are automatically synced. A resync is only needed when changing viewport/device settings, zoom level, or when the underlying instance needs to be restarted. For web tests, changing the entrypoint URL will prompt you with an option to navigate to the new URL
+- **Single active tab**: one tab at a time. Other tabs see the screen as "busy" and can take it over.
+- **Persistent session**: the screen survives test switches. Variables, files, rules, and login session auto-sync as you navigate.
+- **Config changes need a restart**: viewport, zoom, device, app, or entrypoint URL changes trigger the **Screen Out of Sync** flow.
 
 ### Controls
 
@@ -46,16 +48,20 @@ Executes your test starting from the currently selected step (highlighted in blu
 Enables recording mode where you can interact with the embedded screen and Docket will automatically capture and cache your actions. This is the primary way to create [recorded steps](/essentials/recorded-steps).
 
 #### Resync
-Opens a resync dialog.
+Opens the resync dialog to re-push the test's configuration to the running screen.
 
 For web tests:
-- **Navigate to URL**: Navigates the browser to the test's entrypoint URL
-- **Restart browser**: Restarts the browser and applies hard-sync settings like viewport size, zoom level, etc.
+- **Navigate to URL**: navigate the browser to the test's entrypoint URL.
+- **Restart browser**: restart the browser to apply viewport, zoom, and tunnel changes.
 
 For mobile tests:
-- **Restart app**: Relaunches the [active build](/essentials/mobile-apps#apps-and-builds) on the simulator/emulator. The app itself is not reinstalled and the device is not restarted.
+- **Restart app**: relaunch the [active build](/essentials/mobile-apps#apps-and-builds) on the simulator/emulator. The app is not reinstalled and the device is not restarted.
 
-Most configuration changes (variables, files, and logged-in user session) auto-sync and don't require a resync.
+Variables, files, rules, and login session are already auto-synced, so resync is only needed for the items listed above.
+
+### Screen Out of Sync
+
+When the running screen drifts from the current test's device, viewport, zoom, orientation, or app, the stream gets an overlay listing the specific drifts and a single **Restart Screen** button to realign. Run, Record, and Run-from-Step are disabled until the worker matches. Modules inherit the running screen's config and never trigger this overlay.
 
 #### Stop
-Terminates the instance. You'll need to launch a new one when you want to continue creating or editing tests.
+Terminates the instance. You'll need to launch a new one to continue creating or editing tests.
