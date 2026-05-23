@@ -15,16 +15,8 @@ Retrieve modules in your account, with optional filtering and step inclusion.
   Whether to include the full step details (flattened, with nested modules expanded) for each module. Defaults to `false`.
 </ParamField>
 
-<ParamField query="viewport_width" type="integer">
-  Filter modules by viewport width.
-</ParamField>
-
-<ParamField query="viewport_height" type="integer">
-  Filter modules by viewport height.
-</ParamField>
-
-<ParamField query="browser_zoom" type="number">
-  Filter modules by browser zoom level.
+<ParamField query="config_key" type="string">
+  When `with_steps=true`, scopes each step's internal cache to a specific execution config. Typically you don't construct this yourself — the runtime resolves it for you when a run is triggered.
 </ParamField>
 
 <ParamField query="test_blueprint_category_id" type="string">
@@ -95,32 +87,12 @@ GET /modules/list?ids=962,964&with_steps=true
       The module status (e.g. `"active"`).
     </ResponseField>
 
-    <ResponseField name="device_type" type="string">
-      The device type (`"browser"`, `"android"`, or `"ios"`).
-    </ResponseField>
-
-    <ResponseField name="device_name" type="string">
-      The device name, if set.
-    </ResponseField>
-
     <ResponseField name="step_count" type="integer">
       Number of steps in the module.
     </ResponseField>
 
     <ResponseField name="company_id" type="integer">
       Your company ID.
-    </ResponseField>
-
-    <ResponseField name="browser_zoom" type="number">
-      The browser zoom level.
-    </ResponseField>
-
-    <ResponseField name="viewport_width" type="integer">
-      Browser viewport width.
-    </ResponseField>
-
-    <ResponseField name="viewport_height" type="integer">
-      Browser viewport height.
     </ResponseField>
 
     <ResponseField name="test_blueprint_category_id" type="integer">
@@ -231,13 +203,8 @@ GET /modules/list?ids=962,964&with_steps=true
       "title": "Login Setup",
       "type": "step_module",
       "status": "active",
-      "device_type": "browser",
-      "device_name": null,
       "step_count": 1,
       "company_id": 23,
-      "browser_zoom": 1.0,
-      "viewport_width": 1440,
-      "viewport_height": 900,
       "test_blueprint_category_id": null,
       "folder_path": "/",
       "usage_count": 0,
@@ -263,13 +230,8 @@ GET /modules/list?ids=962,964&with_steps=true
       "title": "Auth Token Module",
       "type": "step_module",
       "status": "active",
-      "device_type": "browser",
-      "device_name": null,
       "step_count": 3,
       "company_id": 23,
-      "browser_zoom": 1.0,
-      "viewport_width": 1440,
-      "viewport_height": 900,
       "test_blueprint_category_id": null,
       "folder_path": "/",
       "usage_count": 0,

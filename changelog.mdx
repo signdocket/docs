@@ -3,7 +3,15 @@ title: "Changelog"
 description: "Technical updates to Docket "
 ---
 
-# 🧠 Docket Technical Changelog (Aug – Oct 2025)
+# 🧠 Docket Technical Changelog
+
+## **May 2026**
+- **Universal modules.** One module is reusable across every browser viewport, iOS device, and Android device. The `viewport_width`, `viewport_height`, `browser_zoom`, `device_type`, and `device_name` fields have been removed from the module API.
+- **Per-config step caches.** Recorded and self-healed steps stay sharp on every device / viewport / zoom they've been run against. `list-modules` adds a `config_key` query param to scope what's returned.
+- **New Start Screen launcher.** The Start Screen button now opens a device picker grouped by platform with per-resolution entries and inline mobile app selection. Defaults follow the test you're viewing.
+- **Screen Out of Sync overlay.** When the running worker drifts from the test's config, the stream shows an overlay listing the specific drifts and a single **Restart Screen** button. Run and Record are disabled until they match.
+
+---
 
 ## **October 2025**
 - Optimized AWS + Porter cluster configuration, cutting average browser-worker CPU/memory usage by ~22%.  

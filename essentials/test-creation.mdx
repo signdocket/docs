@@ -90,7 +90,8 @@ Modules are reusable collections of steps that can be created once and inserted 
 **Key features:**
 - **Create and manage** modules in the "Modules" section of Docket
 - **Compose with any step type**: Modules can contain AI steps, recorded steps, and API steps
-- **Cannot nest**: Modules cannot reference other modules
+- **Can nest**: A `step_module` step inside a module references another module (up to 5 levels deep)
+- **Universal**: One module works across every browser viewport, iOS device, and Android device — modules inherit the running screen's config rather than carrying their own
 - **CRUD interface**: The module creation interface is similar to test creation, with a [remote screen](/essentials/remote-screen) for recording interactions
 
 ##### Variables in Modules
