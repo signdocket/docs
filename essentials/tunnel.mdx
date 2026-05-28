@@ -6,9 +6,7 @@ icon: "plug"
 
 ### Overview
 
-The Docket tunnel lets you run tests against your local development environment without exposing it to the public internet. Only your authenticated Docket account can access the proxied services.
-
-Works across **Web, iOS, and Android**—point any screen or device at `localhost`, a private network, a staging environment, or any service that isn't publicly reachable. If your laptop can hit it, Docket can test it.
+The Docket Tunnel lets you run tests against your local development environment—across **Web, iOS, and Android**—without exposing it to the public internet. Only your authenticated Docket account can access the proxied services. If your laptop can hit it, Docket can test it.
 
 ### Install the CLI
 
@@ -46,3 +44,10 @@ While the tunnel is running:
 - Your local services are accessible from within your authenticated Docket account
 - Resources are **not** accessible from the public internet or any other Docket account
 - Press `Ctrl+C` to stop the tunnel
+
+### Pointing Tests at Your Tunnel
+
+- **Web**: set the test's **URL** to your local address (e.g. `http://localhost:3000`).
+- **iOS / Android**: apps that already talk to a private host just work. To jump to a private web app, use a **Deep Link** step.
+
+![iOS test using a localhost deep link through the Docket tunnel](/images/Screenshot_2026-05-28_at_4.23.44_PM.png)
